@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -738,35 +738,23 @@
                 <div class="form-grid triple">
                     <div class="field-group">
                         <label class="field-label" for="sexe">Sexe</label>
-                        <select id="sexe" name="Id_sexe">
+                        <select id="sexe" name="idSexe">
                             <option value="">-- Sélectionner --</option>
-                            <option value="1">Masculin</option>
-                            <option value="2">Féminin</option>
+                            <option th:each="s : ${sexes}" th:value="${s.idSexe}" th:text="${s.libelle}"></option>
                         </select>
                     </div>
                     <div class="field-group">
                         <label class="field-label" for="situation_familiale">Situation familiale</label>
-                        <select id="situation_familiale" name="Id_situation_familiale">
+                        <select id="situation_familiale" name="idSituationFamiliale">
                             <option value="">-- Sélectionner --</option>
-                            <option value="1">Célibataire</option>
-                            <option value="2">Marié(e)</option>
-                            <option value="3">Divorcé(e)</option>
-                            <option value="4">Veuf / Veuve</option>
-                            <option value="5">Pacsé(e)</option>
+                            <option th:each="sf : ${situationsFamiliales}" th:value="${sf.idSituationFamiliale}" th:text="${sf.libelle}"></option>
                         </select>
                     </div>
                     <div class="field-group">
                         <label class="field-label" for="nationalite">Nationalité</label>
-                        <select id="nationalite" name="Id_nationalite">
+                        <select id="nationalite" name="idNationalite">
                             <option value="">-- Sélectionner --</option>
-                            <option value="1">Française</option>
-                            <option value="2">Américaine</option>
-                            <option value="3">Allemande</option>
-                            <option value="4">Britannique</option>
-                            <option value="5">Chinoise</option>
-                            <option value="6">Indienne</option>
-                            <option value="7">Japonaise</option>
-                            <option value="8">Autre</option>
+                            <option th:each="n : ${nationalites}" th:value="${n.idNationalite}" th:text="${n.libelle}"></option>
                         </select>
                     </div>
                 </div>
@@ -774,16 +762,9 @@
                 <div class="form-grid single">
                     <div class="field-group">
                         <label class="field-label" for="pays">Pays de résidence actuel</label>
-                        <select id="pays" name="Id_Pays">
+                        <select id="pays" name="idPays">
                             <option value="">-- Sélectionner le pays --</option>
-                            <option value="1">France</option>
-                            <option value="2">États-Unis</option>
-                            <option value="3">Allemagne</option>
-                            <option value="4">Royaume-Uni</option>
-                            <option value="5">Chine</option>
-                            <option value="6">Inde</option>
-                            <option value="7">Japon</option>
-                            <option value="8">Autre</option>
+                            <option th:each="p : ${pays}" th:value="${p.idPays}" th:text="${p.libelle}"></option>
                         </select>
                     </div>
                 </div>
@@ -876,20 +857,17 @@
                 <h2 class="section-title">Type de visa souhaité</h2>
 
                 <div class="type-visa-cards">
-                    <label class="type-visa-card" onclick="selectVisaType('investisseur')">
-                        <input type="radio" name="visa_type" value="1" id="visa_investisseur">
-                        <span class="card-icon">🏢</span>
-                        <div class="card-title">Visa Investisseur</div>
-                        <div class="card-desc">Pour les personnes souhaitant investir et développer des activités
-                            économiques à Madagascar.</div>
-                    </label>
-                    <label class="type-visa-card" onclick="selectVisaType('travailleur')">
-                        <input type="radio" name="visa_type" value="2" id="visa_travailleur">
-                        <span class="card-icon">👷</span>
-                        <div class="card-title">Visa Travailleur</div>
-                        <div class="card-desc">Pour les personnes disposant d'un contrat de travail ou d'une offre
-                            d'emploi à Madagascar.</div>
-                    </label>
+                    <th:block th:each="tv : ${typesVisa}">
+                        <label class="type-visa-card" th:onclick="'selectVisaType(\'' + ${tv.idTypeVisa} + '\')'">
+                            <input type="radio" name="visa_type" th:value="${tv.idTypeVisa}" th:id="'visa_' + ${tv.idTypeVisa}">
+                            <span class="card-icon" th:text="${tv.libelle == 'Investisseur' ? '🏢' : tv.libelle == 'Travailleur' ? '👷' : '📋'}"></span>
+                            <div class="card-title" th:text="${tv.libelle}"></div>
+                            <div class="card-desc">
+                                <span th:if="${tv.libelle == 'Investisseur'}">Pour les personnes souhaitant investir et développer des activités économiques à Madagascar.</span>
+                                <span th:unless="${tv.libelle == 'Investisseur'}">Pour les personnes disposant d'un contrat de travail ou d'une offre d'emploi à Madagascar.</span>
+                            </div>
+                        </label>
+                    </th:block>
                 </div>
 
                 <div class="nav-buttons">
@@ -1000,6 +978,17 @@
             { id: 'tra_6', label: "Preuve d'enregistrement de l'employeur à Madagascar" },
         ];
 
+        // Mapping des types visa aux documents (basé sur l'ID)
+        const DOCS_BY_TYPE = {
+            '1': DOCS_INVESTISSEUR,  // Premier type (généralement Investisseur)
+            '2': DOCS_TRAVAILLEUR     // Deuxième type (généralement Travailleur)
+        };
+
+        const VISA_TYPES = {
+            '1': { name: 'Investisseur', docs: DOCS_INVESTISSEUR },
+            '2': { name: 'Travailleur', docs: DOCS_TRAVAILLEUR }
+        };
+
         /* ── État ─────────────────────────────────────────────────── */
         let currentStep = 1;
         let selectedVisaType = null;
@@ -1048,23 +1037,23 @@
         }
 
         /* ── Sélection du type de visa ────────────────────────────── */
-        function selectVisaType(type) {
-            selectedVisaType = type;
+        function selectVisaType(typeId) {
+            selectedVisaType = typeId;
             updateDocsStep();
         }
 
         function updateDocsStep() {
             if (!selectedVisaType) return;
 
-            const isInvestisseur = selectedVisaType === 'investisseur';
-            const docs = isInvestisseur ? DOCS_INVESTISSEUR : DOCS_TRAVAILLEUR;
-            const labelText = isInvestisseur
-                ? 'Documents spécifiques — visa investisseur'
-                : 'Documents spécifiques — visa travailleur';
+            const visaType = VISA_TYPES[selectedVisaType];
+            if (!visaType) return;
+
+            const docs = visaType.docs;
+            const labelText = 'Documents spécifiques — visa ' + visaType.name.toLowerCase();
 
             document.getElementById('docs-spec-label').textContent = labelText;
             document.getElementById('docs-badge').textContent =
-                'Type sélectionné : ' + (isInvestisseur ? 'Visa Investisseur' : 'Visa Travailleur')
+                'Type sélectionné : Visa ' + visaType.name
                 + ' — cochez les documents que vous avez préparés.';
 
             const container = document.getElementById('docs-specifiques');
@@ -1078,14 +1067,72 @@
 
         /* ── Soumission ───────────────────────────────────────────── */
         function submitForm() {
-            const ref = 'VLS-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 900000) + 100000);
-            document.getElementById('ref-code').textContent = ref;
+            // Collecter toutes les données du formulaire
+            const formData = {
+                // Étape 1 : État civil
+                nom: document.getElementById('nom')?.value || '',
+                prenom: document.getElementById('prenom')?.value || '',
+                nomJeuneFille: document.getElementById('nom_jeune_fille')?.value || '',
+                dateNaissance: document.getElementById('date_naissance')?.value || null,
+                lieuNaissance: document.getElementById('lieu_naissance')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                contact: document.getElementById('contact')?.value || '',
+                idSexe: document.getElementById('sexe')?.value || null,
+                idSituationFamiliale: document.getElementById('situation_familiale')?.value || null,
+                idNationalite: document.getElementById('nationalite')?.value || null,
+                idPays: document.getElementById('pays')?.value || null,
 
-            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById('success-screen').classList.add('active');
+                // Étape 2 : Passeport
+                numero: document.getElementById('num_passeport')?.value || '',
+                dateDelivrance: document.getElementById('date_delivrance')?.value || null,
+                dateExpirationPasseport: document.getElementById('date_expiration_pp')?.value || null,
 
-            document.querySelectorAll('.step-pill').forEach(el => el.classList.remove('active'));
-            document.getElementById('progress').style.width = '100%';
+                // Étape 3 : Visa transformable
+                reference: document.getElementById('ref_visa')?.value || '',
+                dateEntreeMada: document.getElementById('date_entree')?.value || null,
+                lieu: document.getElementById('lieu_entree')?.value || '',
+                dateExpirationVisa: document.getElementById('date_expir_visa')?.value || null,
+                idTypeDemandeVisa: document.querySelector('input[name="type_demande_visa"]:checked')?.value || null,
+
+                // Étape 4 : Type de visa
+                idTypeVisa: document.querySelector('input[name="visa_type"]:checked')?.value || null,
+
+                // Étape 5 : Documents
+                docCommun: Array.from(document.querySelectorAll('input[name="doc_commun[]"]:checked')).map(el => el.value),
+                docType: Array.from(document.querySelectorAll('input[name="doc_type[]"]:checked')).map(el => el.value)
+            };
+
+            // Validation basique
+            if (!formData.nom || !formData.prenom) {
+                alert('Veuillez remplir au moins le nom et le prénom');
+                return;
+            }
+
+            // Envoyer les données au serveur
+            fetch('/api/demande-visa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Afficher l'écran de succès
+                    document.getElementById('ref-code').textContent = data.refCode;
+                    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('success-screen').classList.add('active');
+                    document.querySelectorAll('.step-pill').forEach(el => el.classList.remove('active'));
+                    document.getElementById('progress').style.width = '100%';
+                } else {
+                    alert('Erreur: ' + (data.message || 'Une erreur est survenue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la soumission du formulaire');
+            });
         }
     </script>
 

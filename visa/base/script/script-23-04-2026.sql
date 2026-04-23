@@ -51,7 +51,7 @@ CREATE TABLE documents_communs
 CREATE TABLE documents_types
 (
     Id_documents_types SERIAL,
-    libelle VARCHAR(50) ,
+    libelle VARCHAR(50),
     is_obligatoire BOOLEAN,
     PRIMARY KEY(Id_documents_types)
 );
@@ -65,6 +65,24 @@ CREATE TABLE demandeur
     PRIMARY KEY(Id_demandeur),
     FOREIGN KEY(Id_type_visa) REFERENCES type_visa(Id_type_visa),
     FOREIGN KEY(Id_type_demande_visa) REFERENCES type_demande_visa(Id_type_demande_visa)
+);
+
+CREATE TABLE statut_demande
+(
+    Id_statut_demande SERIAL,
+    libelle VARCHAR(50),
+    PRIMARY KEY(Id_statut_demande)
+);
+
+CREATE TABLE demande
+(
+    Id_demande SERIAL,
+    date_demande DATE,
+    Id_demandeur INTEGER NOT NULL,
+    Id_statut_demande INTEGER NOT NULL,
+    PRIMARY KEY(Id_demande),
+    FOREIGN KEY(Id_statut_demande) REFERENCES statut_demande(Id_statut_demande),
+    FOREIGN KEY(Id_demandeur) REFERENCES demandeur(Id_demandeur)
 );
 
 CREATE TABLE etat_civil
