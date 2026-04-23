@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de visa long séjour — Madagascar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ─── Reset & Base ─────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --clr-bg: #f5f3ef;
+            --clr-surface: #ffffff;
+            --clr-border: #d8d4cc;
+            --clr-border-md: #c2bdb3;
+            --clr-border-dk: #9e9890;
+            --clr-text: #1a1916;
+            --clr-text-muted: #6b6760;
+            --clr-text-hint: #a09c97;
+            --clr-accent: #1a1916;
+            --clr-accent-bg: #f0ede8;
+            --clr-success: #3a7d44;
+            --clr-info-bg: #edf2fb;
+            --clr-info-text: #1a4a8a;
+
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+            --font-display: 'Libre Baskerville', Georgia, serif;
+            --font-body: 'DM Sans', system-ui, sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--clr-bg);
+            color: var(--clr-text);
+            min-height: 100vh;
+            padding: 2rem 1rem 5rem;
+        }
+
+        /* ─── Layout ────────────────────────────────────────────── */
+        .page-wrapper {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        /* ─── Page Header ───────────────────────────────────────── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header .flag-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.25rem;
+        }
+
+        .flag-stripe {
+            width: 32px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .flag-stripe.red {
+            background: #fc3d32;
+        }
+
+        .flag-stripe.green {
+            background: #007b3a;
+        }
+
+        .flag-stripe.white {
+            background: #fff;
+            border: 1px solid #d8d4cc;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--clr-text);
+            letter-spacing: 0.01em;
+            margin-bottom: 6px;
+        }
+
+        .page-header .subtitle {
+            font-size: 13px;
+            color: var(--clr-text-muted);
+            font-weight: 300;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        /* ─── Progress bar ──────────────────────────────────────── */
+        .progress-wrap {
+            height: 3px;
+            background: var(--clr-border);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--clr-accent);
+            border-radius: 3px;
+            transition: width 0.35s ease;
+        }
+
+        /* ─── Step Navigation ───────────────────────────────────── */
+        .steps-nav {
+            display: flex;
+            background: var(--clr-surface);
+            border: 0.5px solid var(--clr-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step-pill {
+            flex: 1;
+            padding: 11px 6px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--clr-text-hint);
+            border-right: 0.5px solid var(--clr-border);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            background: var(--clr-surface);
+            line-height: 1.35;
+            user-select: none;
+        }
+
+        .step-pill:last-child {
+            border-right: none;
+        }
+
+        .step-pill .step-num {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            color: var(--clr-text-hint);
+            transition: color 0.15s;
+        }
+
+        .step-pill.active {
+            background: var(--clr-accent-bg);
+            color: var(--clr-text);
+        }
+
+        .step-pill.active .step-num {
+            color: var(--clr-text);
+        }
+
+        .step-pill.done {
+            color: var(--clr-text-muted);
+        }
+
+        .step-pill.done .step-num {
+            color: var(--clr-success);
+        }
+
+        .step-pill.done .step-num::after {
+            content: ' ✓';
+            font-size: 11px;
+        }
+
+        .step-pill.clickable:hover {
+            background: var(--clr-accent-bg);
+        }
+
+        /* ─── Form Card ─────────────────────────────────────────── */
+        .form-card {
+            background: var(--clr-surface);
+            border: 0.5px solid var(--clr-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem 2.25rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ─── Section Title ─────────────────────────────────────── */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--clr-text);
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 0.5px solid var(--clr-border);
+        }
+
+        /* ─── Form Grid ─────────────────────────────────────────── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 22px;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-grid.triple {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group.full {
+            grid-column: 1 / -1;
+        }
+
+        /* ─── Labels ────────────────────────────────────────────── */
+        label.field-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--clr-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        /* ─── Inputs ────────────────────────────────────────────── */
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="tel"],
+        select {
+            height: 40px;
+            border: 0.5px solid var(--clr-border-md);
+            border-radius: var(--radius-md);
+            padding: 0 13px;
+            font-size: 14px;
+            font-family: var(--font-body);
+            background: var(--clr-surface);
+            color: var(--clr-text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input::placeholder {
+            color: var(--clr-text-hint);
+        }
+
+        input:hover,
+        select:hover {
+            border-color: var(--clr-border-dk);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--clr-accent);
+            box-shadow: 0 0 0 3px rgba(26, 25, 22, 0.08);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6760' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 34px;
+            cursor: pointer;
+        }
+
+        /* ─── Info Badge ────────────────────────────────────────── */
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--clr-info-text);
+            background: var(--clr-info-bg);
+            border: 0.5px solid #c2d4f0;
+            border-radius: var(--radius-md);
+            padding: 7px 12px;
+            margin-bottom: 1.25rem;
+            line-height: 1.4;
+        }
+
+        .info-badge::before {
+            content: 'ℹ';
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ─── Radio Cards ───────────────────────────────────────── */
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .radio-card {
+            flex: 1;
+            min-width: 140px;
+            border: 0.5px solid var(--clr-border-md);
+            border-radius: var(--radius-md);
+            padding: 13px 16px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--clr-surface);
+        }
+
+        .radio-card:hover {
+            border-color: var(--clr-border-dk);
+            background: var(--clr-accent-bg);
+        }
+
+        .radio-card input[type="radio"] {
+            width: 15px;
+            height: 15px;
+            margin-top: 1px;
+            accent-color: var(--clr-accent);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .radio-card:has(input:checked) {
+            border-color: var(--clr-accent);
+            background: var(--clr-accent-bg);
+            box-shadow: 0 0 0 1px var(--clr-accent);
+        }
+
+        .radio-card-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--clr-text);
+        }
+
+        .radio-card-sub {
+            font-size: 11px;
+            color: var(--clr-text-muted);
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        /* ─── Visa Type Cards ───────────────────────────────────── */
+        .type-visa-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+        .type-visa-card {
+            border: 0.5px solid var(--clr-border-md);
+            border-radius: var(--radius-lg);
+            padding: 20px 18px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+            background: var(--clr-surface);
+            display: block;
+        }
+
+        .type-visa-card:hover {
+            border-color: var(--clr-border-dk);
+            background: var(--clr-accent-bg);
+        }
+
+        .type-visa-card input[type="radio"] {
+            display: none;
+        }
+
+        .type-visa-card:has(input:checked) {
+            border-color: var(--clr-accent);
+            background: var(--clr-accent-bg);
+            box-shadow: 0 0 0 1px var(--clr-accent);
+        }
+
+        .card-icon {
+            font-size: 26px;
+            margin-bottom: 10px;
+            display: block;
+            line-height: 1;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--clr-text);
+            margin-bottom: 5px;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--clr-text-muted);
+            line-height: 1.55;
+        }
+
+        /* ─── Docs separator ────────────────────────────────────── */
+        .docs-section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--clr-text-muted);
+            margin-bottom: 12px;
+            margin-top: 1.25rem;
+        }
+
+        .docs-section-label .line {
+            flex: 1;
+            height: 0.5px;
+            background: var(--clr-border);
+        }
+
+        /* ─── Checkbox Grid ─────────────────────────────────────── */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px 13px;
+            border: 0.5px solid var(--clr-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            background: var(--clr-surface);
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--clr-border-dk);
+            background: var(--clr-accent-bg);
+        }
+
+        .checkbox-item:has(input:checked) {
+            border-color: var(--clr-accent);
+            background: var(--clr-accent-bg);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            margin-top: 1px;
+            accent-color: var(--clr-accent);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-item span {
+            font-size: 13px;
+            line-height: 1.45;
+            cursor: pointer;
+            color: var(--clr-text);
+        }
+
+        /* ─── Nav Buttons ───────────────────────────────────────── */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2.25rem;
+            padding-top: 1.5rem;
+            border-top: 0.5px solid var(--clr-border);
+        }
+
+        .btn {
+            height: 42px;
+            padding: 0 22px;
+            border: 0.5px solid var(--clr-border-md);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background: var(--clr-surface);
+            color: var(--clr-text);
+            transition: background 0.15s, border-color 0.15s, transform 0.1s;
+            letter-spacing: 0.01em;
+        }
+
+        .btn:hover {
+            background: var(--clr-accent-bg);
+            border-color: var(--clr-border-dk);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--clr-accent);
+            color: #fff;
+            border-color: var(--clr-accent);
+        }
+
+        .btn-primary:hover {
+            background: #3a3830;
+            border-color: #3a3830;
+            color: #fff;
+        }
+
+        .btn-ghost {
+            border-color: transparent;
+            color: var(--clr-text-muted);
+            background: transparent;
+        }
+
+        .btn-ghost:hover {
+            background: var(--clr-accent-bg);
+            border-color: transparent;
+        }
+
+        .btn-submit {
+            background: var(--clr-success);
+            color: #fff;
+            border-color: var(--clr-success);
+        }
+
+        .btn-submit:hover {
+            background: #2d6336;
+            border-color: #2d6336;
+            color: #fff;
+        }
+
+        /* ─── Step panels ───────────────────────────────────────── */
+        .step-panel {
+            display: none;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        /* ─── Success screen ────────────────────────────────────── */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-screen.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: #e8f5eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-screen h2 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 400;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .success-screen p {
+            font-size: 14px;
+            color: var(--clr-text-muted);
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .ref-code {
+            display: inline-block;
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: 700;
+            background: var(--clr-accent-bg);
+            border: 0.5px solid var(--clr-border-md);
+            border-radius: var(--radius-md);
+            padding: 8px 18px;
+            margin: 1.25rem 0;
+            letter-spacing: 0.08em;
+            color: var(--clr-text);
+        }
+
+        /* ─── Responsive ────────────────────────────────────────── */
+        @media (max-width: 620px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid.triple {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .type-visa-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .step-pill {
+                font-size: 10px;
+                padding: 9px 4px;
+            }
+
+            .step-pill .step-num {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .form-grid.triple {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <!-- En-tête -->
+        <header class="page-header">
+            <div class="flag-row">
+                <span class="flag-stripe white"></span>
+                <span class="flag-stripe red"></span>
+                <span class="flag-stripe green"></span>
+            </div>
+            <h1>Demande de visa long séjour</h1>
+            <p class="subtitle">République de Madagascar — Direction de l'immigration</p>
+        </header>
+
+        <!-- Barre de progression -->
+        <div class="progress-wrap">
+            <div class="progress-fill" id="progress" style="width: 20%"></div>
+        </div>
+
+        <!-- Navigation des étapes -->
+        <nav class="steps-nav" aria-label="Étapes du formulaire">
+            <div class="step-pill active" data-step="1" onclick="goToStep(1)"><span class="step-num">1</span>État civil
+            </div>
+            <div class="step-pill" data-step="2" onclick="goToStep(2)"><span class="step-num">2</span>Passeport</div>
+            <div class="step-pill" data-step="3" onclick="goToStep(3)"><span class="step-num">3</span>Visa transformable
+            </div>
+            <div class="step-pill" data-step="4" onclick="goToStep(4)"><span class="step-num">4</span>Type de demande
+            </div>
+            <div class="step-pill" data-step="5" onclick="goToStep(5)"><span class="step-num">5</span>Documents</div>
+        </nav>
+
+        <!-- Formulaire principal -->
+        <main class="form-card">
+
+            <!-- ══ ÉTAPE 1 : État civil ══════════════════════════════ -->
+            <section class="step-panel active" id="panel-1" aria-label="État civil">
+                <h2 class="section-title">Informations d'état civil</h2>
+
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label class="field-label" for="nom">Nom de famille</label>
+                        <input type="text" id="nom" name="nom" placeholder="DUPONT" autocomplete="family-name">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="prenom">Prénom(s)</label>
+                        <input type="text" id="prenom" name="prenom" placeholder="Jean Pierre"
+                            autocomplete="given-name">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="nom_jeune_fille">Nom de jeune fille</label>
+                        <input type="text" id="nom_jeune_fille" name="nom_jeune_fille" placeholder="Facultatif">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="date_naissance">Date de naissance</label>
+                        <input type="date" id="date_naissance" name="date_naissance">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="lieu_naissance">Lieu de naissance</label>
+                        <input type="text" id="lieu_naissance" name="lieu_naissance" placeholder="Paris, France">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="email">Adresse e-mail</label>
+                        <input type="email" id="email" name="email" placeholder="exemple@domaine.com"
+                            autocomplete="email">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="contact">Contact téléphonique</label>
+                        <input type="tel" id="contact" name="contact" placeholder="+261 32 00 000 00"
+                            autocomplete="tel">
+                    </div>
+                </div>
+
+                <div class="form-grid triple">
+                    <div class="field-group">
+                        <label class="field-label" for="sexe">Sexe</label>
+                        <select id="sexe" name="Id_sexe">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="1">Masculin</option>
+                            <option value="2">Féminin</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="situation_familiale">Situation familiale</label>
+                        <select id="situation_familiale" name="Id_situation_familiale">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="1">Célibataire</option>
+                            <option value="2">Marié(e)</option>
+                            <option value="3">Divorcé(e)</option>
+                            <option value="4">Veuf / Veuve</option>
+                            <option value="5">Pacsé(e)</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="nationalite">Nationalité</label>
+                        <select id="nationalite" name="Id_nationalite">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="1">Française</option>
+                            <option value="2">Américaine</option>
+                            <option value="3">Allemande</option>
+                            <option value="4">Britannique</option>
+                            <option value="5">Chinoise</option>
+                            <option value="6">Indienne</option>
+                            <option value="7">Japonaise</option>
+                            <option value="8">Autre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid single">
+                    <div class="field-group">
+                        <label class="field-label" for="pays">Pays de résidence actuel</label>
+                        <select id="pays" name="Id_Pays">
+                            <option value="">-- Sélectionner le pays --</option>
+                            <option value="1">France</option>
+                            <option value="2">États-Unis</option>
+                            <option value="3">Allemagne</option>
+                            <option value="4">Royaume-Uni</option>
+                            <option value="5">Chine</option>
+                            <option value="6">Inde</option>
+                            <option value="7">Japon</option>
+                            <option value="8">Autre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <span></span>
+                    <button class="btn btn-primary" onclick="nextStep(1)">Suivant →</button>
+                </div>
+            </section>
+
+            <!-- ══ ÉTAPE 2 : Passeport ═══════════════════════════════ -->
+            <section class="step-panel" id="panel-2" aria-label="Passeport">
+                <h2 class="section-title">Informations sur le passeport</h2>
+
+                <p class="info-badge">Passeport valide requis — expiration minimum 6 mois après la date d'entrée prévue.
+                </p>
+
+                <div class="form-grid">
+                    <div class="field-group full">
+                        <label class="field-label" for="num_passeport">Numéro de passeport</label>
+                        <input type="text" id="num_passeport" name="numero" placeholder="ex : 12AB34567">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="date_delivrance">Date de délivrance</label>
+                        <input type="date" id="date_delivrance" name="date_delivrance">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="date_expiration_pp">Date d'expiration</label>
+                        <input type="date" id="date_expiration_pp" name="date_expiration">
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-ghost" onclick="prevStep(2)">← Retour</button>
+                    <button class="btn btn-primary" onclick="nextStep(2)">Suivant →</button>
+                </div>
+            </section>
+
+            <!-- ══ ÉTAPE 3 : Visa transformable ═════════════════════ -->
+            <section class="step-panel" id="panel-3" aria-label="Visa transformable">
+                <h2 class="section-title">Visa transformable</h2>
+
+                <div class="form-grid">
+                    <div class="field-group full">
+                        <label class="field-label">Type de demande</label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="type_demande_visa" value="1" checked>
+                                <div>
+                                    <div class="radio-card-label">Nouveau titre</div>
+                                    <div class="radio-card-sub">Première demande de transformation de visa</div>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="type_demande_visa" value="2">
+                                <div>
+                                    <div class="radio-card-label">Duplicata</div>
+                                    <div class="radio-card-sub">Remplacement d'un titre perdu ou détérioré</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field-group full">
+                        <label class="field-label" for="ref_visa">Référence du visa transformable</label>
+                        <input type="text" id="ref_visa" name="reference" placeholder="ex : VT-2024-000123">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="date_entree">Date d'entrée à Madagascar</label>
+                        <input type="date" id="date_entree" name="date_entree_mada">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="lieu_entree">Lieu d'entrée</label>
+                        <input type="text" id="lieu_entree" name="lieu" placeholder="ex : Antananarivo — Ivato">
+                    </div>
+                    <div class="field-group full">
+                        <label class="field-label" for="date_expir_visa">Date d'expiration du visa</label>
+                        <input type="date" id="date_expir_visa" name="date_expiration">
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-ghost" onclick="prevStep(3)">← Retour</button>
+                    <button class="btn btn-primary" onclick="nextStep(3)">Suivant →</button>
+                </div>
+            </section>
+
+            <!-- ══ ÉTAPE 4 : Type de visa ════════════════════════════ -->
+            <section class="step-panel" id="panel-4" aria-label="Type de visa">
+                <h2 class="section-title">Type de visa souhaité</h2>
+
+                <div class="type-visa-cards">
+                    <label class="type-visa-card" onclick="selectVisaType('investisseur')">
+                        <input type="radio" name="visa_type" value="1" id="visa_investisseur">
+                        <span class="card-icon">🏢</span>
+                        <div class="card-title">Visa Investisseur</div>
+                        <div class="card-desc">Pour les personnes souhaitant investir et développer des activités
+                            économiques à Madagascar.</div>
+                    </label>
+                    <label class="type-visa-card" onclick="selectVisaType('travailleur')">
+                        <input type="radio" name="visa_type" value="2" id="visa_travailleur">
+                        <span class="card-icon">👷</span>
+                        <div class="card-title">Visa Travailleur</div>
+                        <div class="card-desc">Pour les personnes disposant d'un contrat de travail ou d'une offre
+                            d'emploi à Madagascar.</div>
+                    </label>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-ghost" onclick="prevStep(4)">← Retour</button>
+                    <button class="btn btn-primary" onclick="nextStep(4)">Suivant →</button>
+                </div>
+            </section>
+
+            <!-- ══ ÉTAPE 5 : Documents ═══════════════════════════════ -->
+            <section class="step-panel" id="panel-5" aria-label="Documents requis">
+                <h2 class="section-title">Pièces justificatives requises</h2>
+
+                <p class="info-badge" id="docs-badge">Cochez les documents que vous avez préparés pour votre dossier.
+                </p>
+
+                <!-- Documents communs -->
+                <div class="docs-section-label">
+                    <span>Documents communs à toutes les demandes</span>
+                    <span class="line"></span>
+                </div>
+
+                <div class="checkbox-grid" id="docs-communs">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="1">
+                        <span>Formulaire de demande rempli et signé</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="2">
+                        <span>Copie du passeport (pages d'identité)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="3">
+                        <span>Photos d'identité récentes (4 exemplaires)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="4">
+                        <span>Acte de naissance (traduction officielle)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="5">
+                        <span>Extrait de casier judiciaire vierge</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="6">
+                        <span>Justificatif de domicile à Madagascar</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="7">
+                        <span>Certificat médical d'aptitude</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="doc_commun[]" value="8">
+                        <span>Preuve de paiement des frais de dossier</span>
+                    </label>
+                </div>
+
+                <!-- Documents spécifiques -->
+                <div id="docs-specifiques-wrap">
+                    <div class="docs-section-label">
+                        <span id="docs-spec-label">Documents spécifiques au type de visa</span>
+                        <span class="line"></span>
+                    </div>
+                    <div class="checkbox-grid" id="docs-specifiques">
+                        <label class="checkbox-item" style="opacity: 0.5; pointer-events: none;">
+                            <input type="checkbox" disabled>
+                            <span>Veuillez sélectionner votre type de visa à l'étape précédente.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-ghost" onclick="prevStep(5)">← Retour</button>
+                    <button class="btn btn-submit" onclick="submitForm()">✓ Soumettre la demande</button>
+                </div>
+            </section>
+
+            <!-- ══ ÉCRAN DE SUCCÈS ═══════════════════════════════════ -->
+            <div class="success-screen" id="success-screen">
+                <div class="success-icon">✓</div>
+                <h2>Demande soumise avec succès</h2>
+                <p>Votre dossier a été enregistré. Un récapitulatif vous sera envoyé par e-mail.</p>
+                <div class="ref-code" id="ref-code">VLS-2025-000000</div>
+                <p>Votre dossier sera examiné sous <strong>15 jours ouvrés</strong>. Vous serez contacté à l'adresse
+                    e-mail fournie pour la suite de la procédure.</p>
+            </div>
+
+        </main>
+    </div><!-- /.page-wrapper -->
+
+
+    <script>
+        /* ── Données statiques ────────────────────────────────────── */
+        const DOCS_INVESTISSEUR = [
+            { id: 'inv_1', label: "Plan d'affaires détaillé" },
+            { id: 'inv_2', label: "Preuve de capacité financière (relevés bancaires 3 mois)" },
+            { id: 'inv_3', label: "Attestation d'investissement ou lettre d'intention" },
+            { id: 'inv_4', label: "Statuts de la société (si déjà constituée)" },
+            { id: 'inv_5', label: "Autorisation de l'EDBM (Economic Development Board)" },
+            { id: 'inv_6', label: "Rapport d'audit financier (2 dernières années)" },
+        ];
+
+        const DOCS_TRAVAILLEUR = [
+            { id: 'tra_1', label: "Contrat de travail visé par le Ministère du Travail" },
+            { id: 'tra_2', label: "Autorisation de travail délivrée par les autorités" },
+            { id: 'tra_3', label: "Diplômes et qualifications professionnelles (traduction)" },
+            { id: 'tra_4', label: "Lettre de l'employeur sur papier en-tête officiel" },
+            { id: 'tra_5', label: "Fiche de poste et description des missions" },
+            { id: 'tra_6', label: "Preuve d'enregistrement de l'employeur à Madagascar" },
+        ];
+
+        /* ── État ─────────────────────────────────────────────────── */
+        let currentStep = 1;
+        let selectedVisaType = null;
+        const TOTAL_STEPS = 5;
+
+        /* ── Navigation ───────────────────────────────────────────── */
+        function showStep(step) {
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            const panel = document.getElementById('panel-' + step);
+            if (panel) panel.classList.add('active');
+
+            currentStep = step;
+            updateProgressBar();
+            updateStepNav();
+        }
+
+        function nextStep(from) {
+            if (from < TOTAL_STEPS) showStep(from + 1);
+        }
+
+        function prevStep(from) {
+            if (from > 1) showStep(from - 1);
+        }
+
+        function goToStep(step) {
+            if (step <= currentStep) showStep(step);
+        }
+
+        /* ── Barre de progression ─────────────────────────────────── */
+        function updateProgressBar() {
+            const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+            document.getElementById('progress').style.width = pct + '%';
+        }
+
+        /* ── Pastilles de navigation ──────────────────────────────── */
+        function updateStepNav() {
+            document.querySelectorAll('.step-pill').forEach((el) => {
+                const s = parseInt(el.dataset.step, 10);
+                el.classList.remove('active', 'done', 'clickable');
+                if (s === currentStep) {
+                    el.classList.add('active');
+                } else if (s < currentStep) {
+                    el.classList.add('done', 'clickable');
+                }
+            });
+        }
+
+        /* ── Sélection du type de visa ────────────────────────────── */
+        function selectVisaType(type) {
+            selectedVisaType = type;
+            updateDocsStep();
+        }
+
+        function updateDocsStep() {
+            if (!selectedVisaType) return;
+
+            const isInvestisseur = selectedVisaType === 'investisseur';
+            const docs = isInvestisseur ? DOCS_INVESTISSEUR : DOCS_TRAVAILLEUR;
+            const labelText = isInvestisseur
+                ? 'Documents spécifiques — visa investisseur'
+                : 'Documents spécifiques — visa travailleur';
+
+            document.getElementById('docs-spec-label').textContent = labelText;
+            document.getElementById('docs-badge').textContent =
+                'Type sélectionné : ' + (isInvestisseur ? 'Visa Investisseur' : 'Visa Travailleur')
+                + ' — cochez les documents que vous avez préparés.';
+
+            const container = document.getElementById('docs-specifiques');
+            container.innerHTML = docs.map(d => `
+        <label class="checkbox-item">
+          <input type="checkbox" name="doc_type[]" value="${d.id}">
+          <span>${d.label}</span>
+        </label>
+      `).join('');
+        }
+
+        /* ── Soumission ───────────────────────────────────────────── */
+        function submitForm() {
+            const ref = 'VLS-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 900000) + 100000);
+            document.getElementById('ref-code').textContent = ref;
+
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('success-screen').classList.add('active');
+
+            document.querySelectorAll('.step-pill').forEach(el => el.classList.remove('active'));
+            document.getElementById('progress').style.width = '100%';
+        }
+    </script>
+
+</body>
+
+</html>
