@@ -3,13 +3,11 @@ package com.itu.visa.service;
 import com.itu.visa.dto.DemandeVisaDTO;
 import com.itu.visa.entity.*;
 import com.itu.visa.repository.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class DemandeVisaService {
 
@@ -26,6 +24,26 @@ public class DemandeVisaService {
     private final TypeVisaRepository typeVisaRepository;
     private final TypeDemandeVisaRepository typeDemandeVisaRepository;
 
+    public DemandeVisaService(EtatCivilRepository etatCivilRepository, PasseportRepository passeportRepository,
+            VisaTransformableRepository visaTransformableRepository, DemandeurRepository demandeurRepository,
+            DemandeRepository demandeRepository, StatutDemandeRepository statutDemandeRepository,
+            SexeRepository sexeRepository, SituationFamilialeRepository situationFamilialeRepository,
+            NationaliteRepository nationaliteRepository, PaysRepository paysRepository,
+            TypeVisaRepository typeVisaRepository, TypeDemandeVisaRepository typeDemandeVisaRepository) {
+        this.etatCivilRepository = etatCivilRepository;
+        this.passeportRepository = passeportRepository;
+        this.visaTransformableRepository = visaTransformableRepository;
+        this.demandeurRepository = demandeurRepository;
+        this.demandeRepository = demandeRepository;
+        this.statutDemandeRepository = statutDemandeRepository;
+        this.sexeRepository = sexeRepository;
+        this.situationFamilialeRepository = situationFamilialeRepository;
+        this.nationaliteRepository = nationaliteRepository;
+        this.paysRepository = paysRepository;
+        this.typeVisaRepository = typeVisaRepository;
+        this.typeDemandeVisaRepository = typeDemandeVisaRepository;
+    }
+
     /**
      * Traite la soumission du formulaire de demande de visa
      * 
@@ -34,77 +52,78 @@ public class DemandeVisaService {
      */
     public String traiterDemande(DemandeVisaDTO demandeVisa) {
         // 1. Créer la demande de visa PREMIER (elle n'a pas de dépendance)
-        TypeVisa typeVisa = demandeVisa.getIdTypeVisa() != null ? 
-            typeVisaRepository.findById(demandeVisa.getIdTypeVisa()).orElse(null) : null;
-        TypeDemandeVisa typeDemandeVisa = demandeVisa.getIdTypeDemandeVisa() != null ? 
-            typeDemandeVisaRepository.findById(demandeVisa.getIdTypeDemandeVisa()).orElse(null) : null;
+        TypeVisa typeVisa = demandeVisa.getIdTypeVisa() != null
+                ? typeVisaRepository.findById(demandeVisa.getIdTypeVisa()).orElse(null)
+                : null;
+        TypeDemandeVisa typeDemandeVisa = demandeVisa.getIdTypeDemandeVisa() != null
+                ? typeDemandeVisaRepository.findById(demandeVisa.getIdTypeDemandeVisa()).orElse(null)
+                : null;
 
-        Demandeur demandeur = Demandeur.builder()
-            .code(genererCodeDemande())
-            .typeVisa(typeVisa)
-            .typeDemandeVisa(typeDemandeVisa)
-            .build();
+        Demandeur demandeur = new Demandeur();
+        demandeur.setCode(genererCodeDemande());
+        demandeur.setTypeVisa(typeVisa);
+        demandeur.setTypeDemandeVisa(typeDemandeVisa);
         Demandeur demandeurSave = demandeurRepository.save(demandeur);
 
         // 2. Créer la demande avec statut initial "En attente"
-        StatutDemande statutInitial = statutDemandeRepository.findById(1L).orElseGet(() -> 
-            StatutDemande.builder().libelle("En attente").build()
-        );
-        
-        Demande demande = Demande.builder()
-            .dateDemande(LocalDate.now())
-            .demandeur(demandeurSave)
-            .statutDemande(statutInitial)
-            .build();
+        StatutDemande statutInitial = statutDemandeRepository.findById(1L).orElseGet(() -> {
+            StatutDemande s = new StatutDemande();
+            s.setLibelle("En attente");
+            return s;
+        });
+
+        Demande demande = new Demande();
+        demande.setDateDemande(LocalDate.now());
+        demande.setDemandeur(demandeurSave);
+        demande.setStatutDemande(statutInitial);
         demandeRepository.save(demande);
 
         // 3. Créer/récupérer les références
-        Sexe sexe = demandeVisa.getIdSexe() != null ? 
-            sexeRepository.findById(demandeVisa.getIdSexe()).orElse(null) : null;
-        SituationFamiliale situationFamiliale = demandeVisa.getIdSituationFamiliale() != null ? 
-            situationFamilialeRepository.findById(demandeVisa.getIdSituationFamiliale()).orElse(null) : null;
-        Nationalite nationalite = demandeVisa.getIdNationalite() != null ? 
-            nationaliteRepository.findById(demandeVisa.getIdNationalite()).orElse(null) : null;
-        Pays pays = demandeVisa.getIdPays() != null ? 
-            paysRepository.findById(demandeVisa.getIdPays()).orElse(null) : null;
+        Sexe sexe = demandeVisa.getIdSexe() != null ? sexeRepository.findById(demandeVisa.getIdSexe()).orElse(null)
+                : null;
+        SituationFamiliale situationFamiliale = demandeVisa.getIdSituationFamiliale() != null
+                ? situationFamilialeRepository.findById(demandeVisa.getIdSituationFamiliale()).orElse(null)
+                : null;
+        Nationalite nationalite = demandeVisa.getIdNationalite() != null
+                ? nationaliteRepository.findById(demandeVisa.getIdNationalite()).orElse(null)
+                : null;
+        Pays pays = demandeVisa.getIdPays() != null ? paysRepository.findById(demandeVisa.getIdPays()).orElse(null)
+                : null;
 
         // 4. Créer l'état civil avec le demandeur
-        EtatCivil etatCivil = EtatCivil.builder()
-            .nom(demandeVisa.getNom())
-            .prenom(demandeVisa.getPrenom())
-            .nomJeuneFille(demandeVisa.getNomJeuneFille())
-            .dateNaissance(demandeVisa.getDateNaissance())
-            .lieuNaissance(demandeVisa.getLieuNaissance())
-            .email(demandeVisa.getEmail())
-            .contact(demandeVisa.getContact())
-            .sexe(sexe)
-            .situationFamiliale(situationFamiliale)
-            .nationalite(nationalite)
-            .pays(pays)
-            .demandeur(demandeurSave)
-            .build();
+        EtatCivil etatCivil = new EtatCivil();
+        etatCivil.setNom(demandeVisa.getNom());
+        etatCivil.setPrenom(demandeVisa.getPrenom());
+        etatCivil.setNomJeuneFille(demandeVisa.getNomJeuneFille());
+        etatCivil.setDateNaissance(demandeVisa.getDateNaissance());
+        etatCivil.setLieuNaissance(demandeVisa.getLieuNaissance());
+        etatCivil.setEmail(demandeVisa.getEmail());
+        etatCivil.setContact(demandeVisa.getContact());
+        etatCivil.setSexe(sexe);
+        etatCivil.setSituationFamiliale(situationFamiliale);
+        etatCivil.setNationalite(nationalite);
+        etatCivil.setPays(pays);
+        etatCivil.setDemandeur(demandeurSave);
         etatCivil = etatCivilRepository.save(etatCivil);
 
         // 5. Créer le passeport s'il y a des données
         if (demandeVisa.getNumero() != null && !demandeVisa.getNumero().isEmpty()) {
-            Passeport passeport = Passeport.builder()
-                .numero(demandeVisa.getNumero())
-                .dateDelivrance(demandeVisa.getDateDelivrance())
-                .dateExpiration(demandeVisa.getDateExpirationPasseport())
-                .etatCivil(etatCivil)
-                .build();
+            Passeport passeport = new Passeport();
+            passeport.setNumero(demandeVisa.getNumero());
+            passeport.setDateDelivrance(demandeVisa.getDateDelivrance());
+            passeport.setDateExpiration(demandeVisa.getDateExpirationPasseport());
+            passeport.setEtatCivil(etatCivil);
             passeportRepository.save(passeport);
         }
 
         // 6. Créer la visa transformable s'il y a des données
         if (demandeVisa.getReference() != null && !demandeVisa.getReference().isEmpty()) {
-            VisaTransformable visaTransformable = VisaTransformable.builder()
-                .reference(demandeVisa.getReference())
-                .dateEntreeMada(demandeVisa.getDateEntreeMada())
-                .lieu(demandeVisa.getLieu())
-                .dateExpiration(demandeVisa.getDateExpirationVisa())
-                .etatCivil(etatCivil)
-                .build();
+            VisaTransformable visaTransformable = new VisaTransformable();
+            visaTransformable.setReference(demandeVisa.getReference());
+            visaTransformable.setDateEntreeMada(demandeVisa.getDateEntreeMada());
+            visaTransformable.setLieu(demandeVisa.getLieu());
+            visaTransformable.setDateExpiration(demandeVisa.getDateExpirationVisa());
+            visaTransformable.setEtatCivil(etatCivil);
             visaTransformableRepository.save(visaTransformable);
         }
 
@@ -115,7 +134,7 @@ public class DemandeVisaService {
      * Génère un code unique pour la demande
      */
     private String genererCodeDemande() {
-        return "VLS-" + java.time.Year.now().getValue() + "-" 
-            + String.format("%06d", (int)(Math.random() * 900000) + 100000);
+        return "VLS-" + java.time.Year.now().getValue() + "-"
+                + String.format("%06d", (int) (Math.random() * 900000) + 100000);
     }
 }

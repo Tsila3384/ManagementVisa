@@ -1,15 +1,10 @@
 package com.itu.visa.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "visa_transformable")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class VisaTransformable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +26,65 @@ public class VisaTransformable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_etat_civil", nullable = false, unique = true)
     private EtatCivil etatCivil;
+
+    public VisaTransformable() {
+    }
+
+    public VisaTransformable(Long idVisaTransformable, String reference, LocalDate dateEntreeMada, String lieu,
+            LocalDate dateExpiration, EtatCivil etatCivil) {
+        this.idVisaTransformable = idVisaTransformable;
+        this.reference = reference;
+        this.dateEntreeMada = dateEntreeMada;
+        this.lieu = lieu;
+        this.dateExpiration = dateExpiration;
+        this.etatCivil = etatCivil;
+    }
+
+    public Long getIdVisaTransformable() {
+        return idVisaTransformable;
+    }
+
+    public void setIdVisaTransformable(Long idVisaTransformable) {
+        this.idVisaTransformable = idVisaTransformable;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public LocalDate getDateEntreeMada() {
+        return dateEntreeMada;
+    }
+
+    public void setDateEntreeMada(LocalDate dateEntreeMada) {
+        this.dateEntreeMada = dateEntreeMada;
+    }
+
+    public String getLieu() {
+        return lieu;
+    }
+
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
+    }
+
+    public LocalDate getDateExpiration() {
+        return dateExpiration;
+    }
+
+    public void setDateExpiration(LocalDate dateExpiration) {
+        this.dateExpiration = dateExpiration;
+    }
+
+    public EtatCivil getEtatCivil() {
+        return etatCivil;
+    }
+
+    public void setEtatCivil(EtatCivil etatCivil) {
+        this.etatCivil = etatCivil;
+    }
 }
