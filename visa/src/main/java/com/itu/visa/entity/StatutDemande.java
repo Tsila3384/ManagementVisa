@@ -1,14 +1,9 @@
 package com.itu.visa.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "statut_demande")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class StatutDemande {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,4 +12,28 @@ public class StatutDemande {
 
     @Column(name = "libelle", length = 50)
     private String libelle;
+
+    public StatutDemande() {
+    }
+
+    public StatutDemande(Long idStatutDemande, String libelle) {
+        this.idStatutDemande = idStatutDemande;
+        this.libelle = libelle;
+    }
+
+    public Long getIdStatutDemande() {
+        return idStatutDemande;
+    }
+
+    public void setIdStatutDemande(Long idStatutDemande) {
+        this.idStatutDemande = idStatutDemande;
+    }
+
+    public String getLibelle() {
+        return libelle;
+    }
+
+    public void setLibelle(String libelle) {
+        this.libelle = libelle;
+    }
 }
