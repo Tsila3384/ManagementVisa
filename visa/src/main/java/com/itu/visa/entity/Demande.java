@@ -56,11 +56,18 @@ public class Demande {
         this.demandeur = demandeur;
     }
 
+
     public StatutDemande getStatutDemande() {
         return statutDemande;
     }
 
     public void setStatutDemande(StatutDemande statutDemande) {
         this.statutDemande = statutDemande;
+    }
+
+    // Ajout : méthode pour formatage de la date pour Thymeleaf
+    public String getDateDemandeFormatee() {
+        if (dateDemande == null) return "";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dateDemande);
     }
 }

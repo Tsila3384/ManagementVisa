@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Demande</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: #f5f3ef;
+            color: #1a1916;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #d8d4cc;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 0.5rem;
+            color: #1a1916;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d8d4cc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #3a7d44;
+            box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d8d4cc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3a7d44;
+            box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button, a.button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: #d8d4cc;
+            color: #1a1916;
+        }
+
+        .btn-secondary:hover {
+            background: #c8c3b8;
+        }
+
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            font-size: 13px;
+            color: #0d47a1;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Nouvelle Demande</h1>
+
+        <div class="info">
+            ℹ️ Créez une nouvelle demande vierge. Vous pourrez ajouter les documents et détails par la suite.
+        </div>
+
+        <form method="post" action="/duplicata/nouvelle-save">
+            <div class="form-group">
+                <label for="typeVisaId">Type de Visa <span style="color: #e74c3c;">*</span></label>
+                <select name="typeVisaId" id="typeVisaId" required>
+                    <option value="">-- Sélectionner un type --</option>
+                    <option th:each="typeVisa : ${typesVisa}" 
+                            th:value="${typeVisa.idTypeVisa}"
+                            th:text="${typeVisa.libelle}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="typeDemandeId">Type de Demande <span style="color: #e74c3c;">*</span></label>
+                <select name="typeDemandeId" id="typeDemandeId" required>
+                    <option value="">-- Sélectionner un type --</option>
+                    <option th:each="typeDemande : ${typesDemandeVisa}" 
+                            th:value="${typeDemande.idTypeDemandeVisa}"
+                            th:text="${typeDemande.libelle}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="code">Référence (optionnel)</label>
+                <input type="text" name="code" id="code" placeholder="Ex: VLS-2026-000123">
+            </div>
+
+            <div class="form-group">
+                <label for="remarques">Remarques (optionnel)</label>
+                <textarea name="remarques" id="remarques" placeholder="Entrez vos remarques..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <a href="/demandes" class="button btn-secondary">← Annuler</a>
+                <button type="submit" class="btn-primary">Créer</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

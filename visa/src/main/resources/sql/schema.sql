@@ -138,6 +138,27 @@ CREATE TABLE IF NOT EXISTS type_visa_documents (
     FOREIGN KEY(id_documents_types) REFERENCES documents_types(id_documents_types)
 );
 
+CREATE TABLE IF NOT EXISTS historique_document (
+    id SERIAL,
+    demandeur_id INTEGER NOT NULL,
+    document_id INTEGER NOT NULL,
+    date_remise TIMESTAMP,
+    PRIMARY KEY(id),
+    FOREIGN KEY(demandeur_id) REFERENCES demandeur(id_demandeur),
+    FOREIGN KEY(document_id) REFERENCES documents_types(id_documents_types)
+);
+
+CREATE TABLE IF NOT EXISTS duplicata (
+    id_duplicata SERIAL,
+    id_demande_original INTEGER,
+    id_demande_duplicata INTEGER NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    remarques VARCHAR(500),
+    PRIMARY KEY(id_duplicata),
+    FOREIGN KEY(id_demande_original) REFERENCES demande(id_demande),
+    FOREIGN KEY(id_demande_duplicata) REFERENCES demande(id_demande)
+);
+
 -- Insertion des données initiales de référence (si vides)
 
 INSERT INTO sexe (libelle) VALUES ('Masculin') ON CONFLICT DO NOTHING;

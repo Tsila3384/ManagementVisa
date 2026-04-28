@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Demande - Choix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f5f3ef 0%, #eae7e0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 400;
+            color: #1a1916;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b6760;
+            font-size: 14px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: inherit;
+        }
+
+        .option-card:hover {
+            border-color: #3a7d44;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .option-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+
+        .option-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1916;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-desc {
+            font-size: 13px;
+            color: #6b6760;
+            line-height: 1.5;
+        }
+
+        .option-card.duplicate {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f6 100%);
+        }
+
+        .option-card.duplicate:hover {
+            border-color: #3a7d44;
+        }
+
+        .option-card.new {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+        }
+
+        .option-card.new:hover {
+            border-color: #1976d2;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: #1a1916;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .back-link a:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nouvelle Demande</h1>
+            <p>Choisissez comment créer votre demande</p>
+        </div>
+
+        <div class="options">
+            <a href="/duplicata/formulaire-duplicate" class="option-card duplicate">
+                <div class="option-icon">📋</div>
+                <div class="option-title">Avec données antérieures</div>
+                <div class="option-desc">Dupliquer une demande existante et modifier les informations</div>
+            </a>
+
+            <a href="/duplicata/nouvelle" class="option-card new">
+                <div class="option-icon">✨</div>
+                <div class="option-title">Nouvelle demande</div>
+                <div class="option-desc">Créer une nouvelle demande à partir de zéro</div>
+            </a>
+        </div>
+
+        <div class="back-link">
+            <a href="/demandes">← Retour à la liste</a>
+        </div>
+    </div>
+</body>
+</html>
