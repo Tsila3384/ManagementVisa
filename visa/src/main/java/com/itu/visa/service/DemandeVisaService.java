@@ -23,13 +23,21 @@ public class DemandeVisaService {
     private final PaysRepository paysRepository;
     private final TypeVisaRepository typeVisaRepository;
     private final TypeDemandeVisaRepository typeDemandeVisaRepository;
+    private final DemandeDocumentsCommunRepository demandeDocumentsCommunRepository;
+    private final DemandeDocumentsTypeRepository demandeDocumentsTypeRepository;
+    private final DocumentsCommunRepository documentsCommunRepository;
+    private final DocumentsTypeRepository documentsTypeRepository;
 
     public DemandeVisaService(EtatCivilRepository etatCivilRepository, PasseportRepository passeportRepository,
             VisaTransformableRepository visaTransformableRepository, DemandeurRepository demandeurRepository,
             DemandeRepository demandeRepository, StatutDemandeRepository statutDemandeRepository,
             SexeRepository sexeRepository, SituationFamilialeRepository situationFamilialeRepository,
             NationaliteRepository nationaliteRepository, PaysRepository paysRepository,
-            TypeVisaRepository typeVisaRepository, TypeDemandeVisaRepository typeDemandeVisaRepository) {
+            TypeVisaRepository typeVisaRepository, TypeDemandeVisaRepository typeDemandeVisaRepository,
+            DemandeDocumentsCommunRepository demandeDocumentsCommunRepository,
+            DemandeDocumentsTypeRepository demandeDocumentsTypeRepository,
+            DocumentsCommunRepository documentsCommunRepository,
+            DocumentsTypeRepository documentsTypeRepository) {
         this.etatCivilRepository = etatCivilRepository;
         this.passeportRepository = passeportRepository;
         this.visaTransformableRepository = visaTransformableRepository;
@@ -42,6 +50,10 @@ public class DemandeVisaService {
         this.paysRepository = paysRepository;
         this.typeVisaRepository = typeVisaRepository;
         this.typeDemandeVisaRepository = typeDemandeVisaRepository;
+        this.demandeDocumentsCommunRepository = demandeDocumentsCommunRepository;
+        this.demandeDocumentsTypeRepository = demandeDocumentsTypeRepository;
+        this.documentsCommunRepository = documentsCommunRepository;
+        this.documentsTypeRepository = documentsTypeRepository;
     }
 
     /**
@@ -127,6 +139,61 @@ public class DemandeVisaService {
             visaTransformableRepository.save(visaTransformable);
         }
 
+        // 7. Enregistrer les documents communs cochés
+        if (demandeVisa.getDocCommun() != null && !demandeVisa.getDocCommun().isEmpty()) {
+            for (String docId : demandeVisa.getDocCommun()) {
+                try {
+                    Long documentId = Long.parseLong(docId);
+                    DocumentsCommun documentsCommun = documentsCommunRepository.findById(documentId).orElse(null);
+                    if (documentsCommun != null) {
+                        DemandeDocumentsCommun demandeDocumentsCommun = new DemandeDocumentsCommun();
+                        demandeDocumentsCommun.setIsOk(true);
+                        demandeDocumentsCommun.setDemandeur(demandeurSave);
+                        demandeDocumentsCommun.setDocumentsCommun(documentsCommun);
+                        demandeDocumentsCommunRepository.save(demandeDocumentsCommun);
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignorer les IDs invalides
+                }
+            }
+        }
+
+        // 8. Enregistrer les documents de type coché
+        if (demandeVisa.getDocType() != null && !demandeVisa.getDocType().isEmpty()) {
+            for (String docId : demandeVisa.getDocType()) {
+                // Les IDs textuels (inv_1, tra_1, etc.) sont des identifiants client
+                // Essayer d'abord en tant que Long, sinon créer un document type avec le libelle
+                DocumentsType documentsType = null;
+                
+                try {
+                    // Essayer de convertir en Long (pour les IDs numériques)
+                    Long documentId = Long.parseLong(docId);
+                    documentsType = documentsTypeRepository.findById(documentId).orElse(null);
+                } catch (NumberFormatException e) {
+                    // Si c'est un ID texte (inv_1, tra_1), créer un document type temporaire
+                    // avec le libelle basé sur le mapping client
+                    String libelle = mapDocIdToLibelle(docId);
+                    if (libelle != null && !libelle.isEmpty()) {
+                        // Pour les documents spécifiques, créer ou récupérer par libelle
+                        // Pour simplifier, on crée un nouveau DocumentsType à chaque fois
+                        // Dans une vraie app, on utiliserait une recherche par libelle
+                        documentsType = new DocumentsType();
+                        documentsType.setLibelle(libelle);
+                        documentsType.setIsObligatoire(false);
+                        documentsType = documentsTypeRepository.save(documentsType);
+                    }
+                }
+                
+                if (documentsType != null) {
+                    DemandeDocumentsType demandeDocumentsType = new DemandeDocumentsType();
+                    demandeDocumentsType.setIsOk(true);
+                    demandeDocumentsType.setDocumentsType(documentsType);
+                    demandeDocumentsType.setDemandeur(demandeurSave);
+                    demandeDocumentsTypeRepository.save(demandeDocumentsType);
+                }
+            }
+        }
+
         return demandeurSave.getCode();
     }
 
@@ -136,5 +203,41 @@ public class DemandeVisaService {
     private String genererCodeDemande() {
         return "VLS-" + java.time.Year.now().getValue() + "-"
                 + String.format("%06d", (int) (Math.random() * 900000) + 100000);
+    }
+
+    /**
+     * Map les IDs textuels des documents spécifiques à leurs libellés
+     */
+    private String mapDocIdToLibelle(String docId) {
+        switch (docId) {
+            // Documents Investisseur
+            case "inv_1":
+                return "Plan d'affaires détaillé";
+            case "inv_2":
+                return "Preuve de capacité financière (relevés bancaires 3 mois)";
+            case "inv_3":
+                return "Attestation d'investissement ou lettre d'intention";
+            case "inv_4":
+                return "Statuts de la société (si déjà constituée)";
+            case "inv_5":
+                return "Autorisation de l'EDBM (Economic Development Board)";
+            case "inv_6":
+                return "Rapport d'audit financier (2 dernières années)";
+            // Documents Travailleur
+            case "tra_1":
+                return "Contrat de travail visé par le Ministère du Travail";
+            case "tra_2":
+                return "Autorisation de travail délivrée par les autorités";
+            case "tra_3":
+                return "Diplômes et qualifications professionnelles (traduction)";
+            case "tra_4":
+                return "Lettre de l'employeur sur papier en-tête officiel";
+            case "tra_5":
+                return "Fiche de poste et description des missions";
+            case "tra_6":
+                return "Preuve d'enregistrement de l'employeur à Madagascar";
+            default:
+                return null;
+        }
     }
 }

@@ -491,6 +491,12 @@
             color: var(--clr-text);
         }
 
+        .checkbox-item .required {
+            color: #e74c3c;
+            font-weight: 600;
+            margin-left: 3px;
+        }
+
         /* ─── Nav Buttons ───────────────────────────────────────── */
         .nav-buttons {
             display: flex;
@@ -659,6 +665,32 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ─── Header Links ──────────────────────────────────────── */
+        .header-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-links a {
+            font-size: 13px;
+            color: var(--clr-accent);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 0.5px solid var(--clr-border);
+            border-radius: var(--radius-md);
+            background: transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .header-links a:hover {
+            background: var(--clr-accent-bg);
+            border-color: var(--clr-accent);
+        }
     </style>
 </head>
 
@@ -676,6 +708,11 @@
             <h1>Demande de visa long séjour</h1>
             <p class="subtitle">République de Madagascar — Direction de l'immigration</p>
         </header>
+
+        <!-- Header Links -->
+        <div class="header-links">
+            <a href="/demandes">📋 Voir les demandes</a>
+        </div>
 
         <!-- Barre de progression -->
         <div class="progress-wrap">
@@ -890,38 +927,7 @@
                 </div>
 
                 <div class="checkbox-grid" id="docs-communs">
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="1">
-                        <span>Formulaire de demande rempli et signé</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="2">
-                        <span>Copie du passeport (pages d'identité)</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="3">
-                        <span>Photos d'identité récentes (4 exemplaires)</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="4">
-                        <span>Acte de naissance (traduction officielle)</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="5">
-                        <span>Extrait de casier judiciaire vierge</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="6">
-                        <span>Justificatif de domicile à Madagascar</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="7">
-                        <span>Certificat médical d'aptitude</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="doc_commun[]" value="8">
-                        <span>Preuve de paiement des frais de dossier</span>
-                    </label>
+                    <!-- Chargé dynamiquement depuis l'API -->
                 </div>
 
                 <!-- Documents spécifiques -->
@@ -959,40 +965,64 @@
 
 
     <script>
-        /* ── Données statiques ────────────────────────────────────── */
-        const DOCS_INVESTISSEUR = [
-            { id: 'inv_1', label: "Plan d'affaires détaillé" },
-            { id: 'inv_2', label: "Preuve de capacité financière (relevés bancaires 3 mois)" },
-            { id: 'inv_3', label: "Attestation d'investissement ou lettre d'intention" },
-            { id: 'inv_4', label: "Statuts de la société (si déjà constituée)" },
-            { id: 'inv_5', label: "Autorisation de l'EDBM (Economic Development Board)" },
-            { id: 'inv_6', label: "Rapport d'audit financier (2 dernières années)" },
-        ];
-
-        const DOCS_TRAVAILLEUR = [
-            { id: 'tra_1', label: "Contrat de travail visé par le Ministère du Travail" },
-            { id: 'tra_2', label: "Autorisation de travail délivrée par les autorités" },
-            { id: 'tra_3', label: "Diplômes et qualifications professionnelles (traduction)" },
-            { id: 'tra_4', label: "Lettre de l'employeur sur papier en-tête officiel" },
-            { id: 'tra_5', label: "Fiche de poste et description des missions" },
-            { id: 'tra_6', label: "Preuve d'enregistrement de l'employeur à Madagascar" },
-        ];
-
-        // Mapping des types visa aux documents (basé sur l'ID)
-        const DOCS_BY_TYPE = {
-            '1': DOCS_INVESTISSEUR,  // Premier type (généralement Investisseur)
-            '2': DOCS_TRAVAILLEUR     // Deuxième type (généralement Travailleur)
-        };
-
-        const VISA_TYPES = {
-            '1': { name: 'Investisseur', docs: DOCS_INVESTISSEUR },
-            '2': { name: 'Travailleur', docs: DOCS_TRAVAILLEUR }
-        };
-
         /* ── État ─────────────────────────────────────────────────── */
         let currentStep = 1;
         let selectedVisaType = null;
         const TOTAL_STEPS = 5;
+        let docsCommuns = [];
+        let docsType = [];
+
+        /* ── Initialisation ───────────────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDocumentsCommuns();
+        });
+
+        /* ── Charger les documents ────────────────────────────────── */
+        async function loadDocumentsCommuns() {
+            try {
+                const response = await fetch('/api/documents-communs');
+                docsCommuns = await response.json();
+                renderDocumentsCommuns();
+            } catch (error) {
+                console.error('Erreur lors du chargement des documents communs:', error);
+            }
+        }
+
+        async function loadDocumentsType(typeVisaId) {
+            try {
+                const response = await fetch(`/api/documents-type/${typeVisaId}`);
+                docsType = await response.json();
+                renderDocumentsType();
+            } catch (error) {
+                console.error('Erreur lors du chargement des documents spécifiques:', error);
+            }
+        }
+
+        /* ── Afficher les documents communs ──────────────────────── */
+        function renderDocumentsCommuns() {
+            const container = document.getElementById('docs-communs');
+            if (!container) return;
+
+            container.innerHTML = docsCommuns.map(d => `
+        <label class="checkbox-item">
+          <input type="checkbox" name="doc_commun[]" value="${d.id}">
+          <span>${d.label} ${d.isObligatoire ? '<span class="required">*</span>' : ''}</span>
+        </label>
+      `).join('');
+        }
+
+        /* ── Afficher les documents spécifiques ────────────────────── */
+        function renderDocumentsType() {
+            const container = document.getElementById('docs-specifiques');
+            if (!container || docsType.length === 0) return;
+
+            container.innerHTML = docsType.map(d => `
+        <label class="checkbox-item">
+          <input type="checkbox" name="doc_type[]" value="${d.id}">
+          <span>${d.label} ${d.isObligatoire ? '<span class="required">*</span>' : ''}</span>
+        </label>
+      `).join('');
+        }
 
         /* ── Navigation ───────────────────────────────────────────── */
         function showStep(step) {
@@ -1039,30 +1069,24 @@
         /* ── Sélection du type de visa ────────────────────────────── */
         function selectVisaType(typeId) {
             selectedVisaType = typeId;
+            loadDocumentsType(typeId);
             updateDocsStep();
         }
 
         function updateDocsStep() {
             if (!selectedVisaType) return;
 
-            const visaType = VISA_TYPES[selectedVisaType];
-            if (!visaType) return;
+            // Récupérer le nom du type de visa depuis le formulaire
+            const radioButton = document.querySelector(`input[name="visa_type"]:checked`);
+            const typeName = radioButton ? radioButton.parentElement.textContent.trim() : 'visa';
 
-            const docs = visaType.docs;
-            const labelText = 'Documents spécifiques — visa ' + visaType.name.toLowerCase();
+            const labelText = `Documents spécifiques — ${typeName.toLowerCase()}`;
 
             document.getElementById('docs-spec-label').textContent = labelText;
             document.getElementById('docs-badge').textContent =
-                'Type sélectionné : Visa ' + visaType.name
-                + ' — cochez les documents que vous avez préparés.';
+                `Type sélectionné : ${typeName} — cochez les documents que vous avez préparés.`;
 
-            const container = document.getElementById('docs-specifiques');
-            container.innerHTML = docs.map(d => `
-        <label class="checkbox-item">
-          <input type="checkbox" name="doc_type[]" value="${d.id}">
-          <span>${d.label}</span>
-        </label>
-      `).join('');
+            // Les documents seront affichés par renderDocumentsType() après le chargement
         }
 
         /* ── Soumission ───────────────────────────────────────────── */
