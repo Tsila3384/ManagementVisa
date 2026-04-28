@@ -20,6 +20,13 @@ public class HomeController {
     private final TypeDemandeVisaRepository typeDemandeVisaRepository;
     private final StatutDemandeRepository statutDemandeRepository;
     private final DemandeVisaService demandeVisaService;
+    private final DocumentsCommunRepository documentsCommunRepository;
+    private final DocumentsTypeRepository documentsTypeRepository;
+    private final DemandeRepository demandeRepository;
+    private final DemandeurRepository demandeurRepository;
+    private final DemandeDocumentsCommunRepository demandeDocumentsCommunRepository;
+    private final DemandeDocumentsTypeRepository demandeDocumentsTypeRepository;
+    private final EtatCivilRepository etatCivilRepository;
 
     public HomeController(SexeRepository sexeRepository,
                           SituationFamilialeRepository situationFamilialeRepository,
@@ -28,7 +35,14 @@ public class HomeController {
                           TypeVisaRepository typeVisaRepository,
                           TypeDemandeVisaRepository typeDemandeVisaRepository,
                           StatutDemandeRepository statutDemandeRepository,
-                          DemandeVisaService demandeVisaService) {
+                          DemandeVisaService demandeVisaService,
+                          DocumentsCommunRepository documentsCommunRepository,
+                          DocumentsTypeRepository documentsTypeRepository,
+                          DemandeRepository demandeRepository,
+                          DemandeurRepository demandeurRepository,
+                          DemandeDocumentsCommunRepository demandeDocumentsCommunRepository,
+                          DemandeDocumentsTypeRepository demandeDocumentsTypeRepository,
+                          EtatCivilRepository etatCivilRepository) {
         this.sexeRepository = sexeRepository;
         this.situationFamilialeRepository = situationFamilialeRepository;
         this.nationaliteRepository = nationaliteRepository;
@@ -37,6 +51,13 @@ public class HomeController {
         this.typeDemandeVisaRepository = typeDemandeVisaRepository;
         this.statutDemandeRepository = statutDemandeRepository;
         this.demandeVisaService = demandeVisaService;
+        this.documentsCommunRepository = documentsCommunRepository;
+        this.documentsTypeRepository = documentsTypeRepository;
+        this.demandeRepository = demandeRepository;
+        this.demandeurRepository = demandeurRepository;
+        this.demandeDocumentsCommunRepository = demandeDocumentsCommunRepository;
+        this.demandeDocumentsTypeRepository = demandeDocumentsTypeRepository;
+        this.etatCivilRepository = etatCivilRepository;
     }
 
     /**
@@ -87,6 +108,14 @@ public class HomeController {
                 return response;
             }
 
+            // Validation des documents obligatoires
+            String validationMessage = validerDocumentsObligatoires(demandeVisa);
+            if (validationMessage != null) {
+                response.put("success", false);
+                response.put("message", validationMessage);
+                return response;
+            }
+
             // Traiter la demande
             String refCode = demandeVisaService.traiterDemande(demandeVisa);
 
@@ -103,6 +132,40 @@ public class HomeController {
     }
 
     /**
+     * Valide que tous les documents obligatoires ont été cochés
+     * 
+     * @param demandeVisa Données du formulaire
+     * @return Message d'erreur s'il y a un problème, null sinon
+     */
+    private String validerDocumentsObligatoires(DemandeVisaDTO demandeVisa) {
+        // Vérifier les documents communs obligatoires
+        var docsCommObligatoires = documentsCommunRepository.findAll().stream()
+                .filter(d -> d.getIsObligatoire() != null && d.getIsObligatoire())
+                .toList();
+
+        for (var docObligatoire : docsCommObligatoires) {
+            if (demandeVisa.getDocCommun() == null || 
+                !demandeVisa.getDocCommun().contains(docObligatoire.getIdDocumentsCommune().toString())) {
+                return "Document obligatoire manquant: " + docObligatoire.getLibelle();
+            }
+        }
+
+        // Vérifier les documents spécifiques obligatoires
+        var docsTypeObligatoires = documentsTypeRepository.findAll().stream()
+                .filter(d -> d.getIsObligatoire() != null && d.getIsObligatoire())
+                .toList();
+
+        for (var docObligatoire : docsTypeObligatoires) {
+            if (demandeVisa.getDocType() == null || 
+                !demandeVisa.getDocType().contains(docObligatoire.getIdDocumentsTypes().toString())) {
+                return "Document obligatoire manquant: " + docObligatoire.getLibelle();
+            }
+        }
+
+        return null; // Tous les documents obligatoires sont cochés
+    }
+
+    /**
      * Charge les données nécessaires pour le formulaire
      */
     private void loadFormData(Model model) {
@@ -113,5 +176,87 @@ public class HomeController {
         model.addAttribute("typesVisa", typeVisaRepository.findAll());
         model.addAttribute("typesDemandeVisa", typeDemandeVisaRepository.findAll());
         model.addAttribute("statutsDemande", statutDemandeRepository.findAll());
+    }
+
+    /**
+     * Récupère tous les documents communs
+     */
+    @GetMapping("/api/documents-communs")
+    @ResponseBody
+    public java.util.List<Map<String, Object>> getDocumentsCommuns() {
+        return documentsCommunRepository.findAll().stream()
+            .map(doc -> {
+                Map<String, Object> docMap = new HashMap<>();
+                docMap.put("id", doc.getIdDocumentsCommune());
+                docMap.put("label", doc.getLibelle());
+                docMap.put("isObligatoire", doc.getIsObligatoire() != null ? doc.getIsObligatoire() : false);
+                return docMap;
+            })
+            .toList();
+    }
+
+    /**
+     * Récupère les documents de type pour un type de visa
+     */
+    @GetMapping("/api/documents-type/{typeVisaId}")
+    @ResponseBody
+    public java.util.List<Map<String, Object>> getDocumentsType(@PathVariable Long typeVisaId) {
+        return documentsTypeRepository.findAll().stream()
+            .map(doc -> {
+                Map<String, Object> docMap = new HashMap<>();
+                docMap.put("id", doc.getIdDocumentsTypes());
+                docMap.put("label", doc.getLibelle());
+                docMap.put("isObligatoire", doc.getIsObligatoire() != null ? doc.getIsObligatoire() : false);
+                return docMap;
+            })
+            .toList();
+    }
+
+    /**
+     * Affiche la page de liste des demandes
+     */
+    @GetMapping("/demandes")
+    public String listDemandes(Model model) {
+        var demandes = demandeRepository.findAll();
+        var demandesWithDetails = demandes.stream()
+            .map(demande -> {
+                var etatCivil = etatCivilRepository.findByDemandeur(demande.getDemandeur()).orElse(null);
+                Map<String, Object> demandeMap = new HashMap<>();
+                demandeMap.put("demande", demande);
+                demandeMap.put("etatCivil", etatCivil);
+                return demandeMap;
+            })
+            .toList();
+        
+        model.addAttribute("demandesWithDetails", demandesWithDetails);
+        return "demandes";
+    }
+
+    /**
+     * Affiche les détails d'une demande
+     */
+    @GetMapping("/demandes/{demandeId}")
+    public String detailsDemande(@PathVariable Long demandeId, Model model) {
+        var demande = demandeRepository.findById(demandeId).orElse(null);
+        if (demande == null) {
+            return "redirect:/demandes";
+        }
+
+        var demandeur = demande.getDemandeur();
+        var etatCivil = etatCivilRepository.findByDemandeur(demandeur).orElse(null);
+        var docsCommuns = demandeDocumentsCommunRepository.findAll().stream()
+            .filter(d -> d.getDemandeur().getIdDemandeur().equals(demandeur.getIdDemandeur()))
+            .toList();
+        var docsTypes = demandeDocumentsTypeRepository.findAll().stream()
+            .filter(d -> d.getDemandeur().getIdDemandeur().equals(demandeur.getIdDemandeur()))
+            .toList();
+
+        model.addAttribute("demande", demande);
+        model.addAttribute("demandeur", demandeur);
+        model.addAttribute("etatCivil", etatCivil);
+        model.addAttribute("docsCommuns", docsCommuns);
+        model.addAttribute("docsTypes", docsTypes);
+        
+        return "detail-demande";
     }
 }
