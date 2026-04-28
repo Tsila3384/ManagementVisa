@@ -3,6 +3,7 @@ package com.itu.visa.controller;
 import com.itu.visa.dto.DemandeVisaDTO;
 import com.itu.visa.repository.*;
 import com.itu.visa.service.DemandeVisaService;
+import com.itu.visa.service.HistoriqueDocumentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,8 @@ public class HomeController {
     private final DemandeDocumentsCommunRepository demandeDocumentsCommunRepository;
     private final DemandeDocumentsTypeRepository demandeDocumentsTypeRepository;
     private final EtatCivilRepository etatCivilRepository;
+    private final HistoriqueDocumentService historiqueDocumentService;
+    private final HistoriqueDocumentRepository historiqueDocumentRepository;
 
     public HomeController(SexeRepository sexeRepository,
                           SituationFamilialeRepository situationFamilialeRepository,
@@ -42,7 +45,9 @@ public class HomeController {
                           DemandeurRepository demandeurRepository,
                           DemandeDocumentsCommunRepository demandeDocumentsCommunRepository,
                           DemandeDocumentsTypeRepository demandeDocumentsTypeRepository,
-                          EtatCivilRepository etatCivilRepository) {
+                          EtatCivilRepository etatCivilRepository,
+                          HistoriqueDocumentService historiqueDocumentService,
+                          HistoriqueDocumentRepository historiqueDocumentRepository) {
         this.sexeRepository = sexeRepository;
         this.situationFamilialeRepository = situationFamilialeRepository;
         this.nationaliteRepository = nationaliteRepository;
@@ -58,6 +63,8 @@ public class HomeController {
         this.demandeDocumentsCommunRepository = demandeDocumentsCommunRepository;
         this.demandeDocumentsTypeRepository = demandeDocumentsTypeRepository;
         this.etatCivilRepository = etatCivilRepository;
+        this.historiqueDocumentService = historiqueDocumentService;
+        this.historiqueDocumentRepository = historiqueDocumentRepository;
     }
 
     /**
@@ -235,9 +242,9 @@ public class HomeController {
     /**
      * Affiche les détails d'une demande
      */
-    @GetMapping("/demandes/{demandeId}")
-    public String detailsDemande(@PathVariable Long demandeId, Model model) {
-        var demande = demandeRepository.findById(demandeId).orElse(null);
+    @GetMapping("/demandes/{id}")
+    public String detailsDemande(@PathVariable Long id, Model model) {
+        var demande = demandeRepository.findById(id).orElse(null);
         if (demande == null) {
             return "redirect:/demandes";
         }
@@ -250,12 +257,16 @@ public class HomeController {
         var docsTypes = demandeDocumentsTypeRepository.findAll().stream()
             .filter(d -> d.getDemandeur().getIdDemandeur().equals(demandeur.getIdDemandeur()))
             .toList();
+        
+        // Charger l'historique des documents remis
+        var historiqueDocuments = historiqueDocumentRepository.findByDemandeurIdOrderByDateRemiseDesc(demandeur.getIdDemandeur());
 
         model.addAttribute("demande", demande);
         model.addAttribute("demandeur", demandeur);
         model.addAttribute("etatCivil", etatCivil);
         model.addAttribute("docsCommuns", docsCommuns);
         model.addAttribute("docsTypes", docsTypes);
+        model.addAttribute("historiqueDocuments", historiqueDocuments);
         
         return "detail-demande";
     }

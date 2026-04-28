@@ -81,6 +81,12 @@ public class EtatCivil {
         this.idEtatCivil = idEtatCivil;
     }
 
+    // Ajout : méthode pour formatage de la date de naissance pour Thymeleaf
+    public String getDateNaissanceFormatee() {
+        if (dateNaissance == null) return "";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dateNaissance);
+    }
+
     public String getNom() {
         return nom;
     }

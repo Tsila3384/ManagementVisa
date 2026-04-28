@@ -196,7 +196,14 @@
     <div class="container">
         <div class="header">
             <h1>Demandes de Visa</h1>
-            <a href="/">← Retour au formulaire</a>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/duplicata/choix" style="padding: 10px 20px; background: var(--clr-success); color: white; text-decoration: none; border-radius: var(--radius-md); transition: opacity 0.15s;">
+                    ➕ Nouvelle Demande
+                </a>
+                <a href="/" style="padding: 10px 20px; background: var(--clr-accent); color: white; text-decoration: none; border-radius: var(--radius-md); transition: opacity 0.15s;">
+                    ← Retour au formulaire
+                </a>
+            </div>
         </div>
 
         <div class="table-wrapper" th:if="${!demandesWithDetails.isEmpty()}">
@@ -218,9 +225,9 @@
                             <span th:text="${item['etatCivil'] != null ? item['etatCivil'].prenom + ' ' + item['etatCivil'].nom : 'N/A'}">Nom Prenom</span>
                         </td>
                         <td th:text="${item['demande'].demandeur.typeVisa != null ? item['demande'].demandeur.typeVisa.libelle : 'N/A'}">Type</td>
-                        <td th:text="${#dates.format(item['demande'].dateDemande, 'dd/MM/yyyy')}">23/04/2026</td>
+                        <td th:text="${item['demande'].dateDemandeFormatee}">23/04/2026</td>
                         <td>
-                            <span th:classappend="'badge-' + (item['demande'].statutDemande.libelle == 'Approuvée' ? 'success' : item['demande'].statutDemande.libelle == 'Rejetée' ? 'danger' : item['demande'].statutDemande.libelle == 'En attente' ? 'warning' : 'info')" class="badge" th:text="${item['demande'].statutDemande.libelle}">Statut</span>
+                            <span th:classappend="${'badge-' + (item['demande'].statutDemande.libelle == 'Approuvée' ? 'success' : item['demande'].statutDemande.libelle == 'Rejetée' ? 'danger' : item['demande'].statutDemande.libelle == 'En attente' ? 'warning' : 'info')}" class="badge" th:text="${item['demande'].statutDemande.libelle}">Statut</span>
                         </td>
                         <td>
                             <a th:href="@{/demandes/{id}(id=${item['demande'].idDemande})}" class="btn btn-primary">Détails</a>

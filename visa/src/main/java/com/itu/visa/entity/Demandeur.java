@@ -8,7 +8,7 @@ public class Demandeur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_demandeur")
-    private Long idDemandeur;
+    public Long idDemandeur;
 
     @Column(name = "code", length = 50)
     private String code;
