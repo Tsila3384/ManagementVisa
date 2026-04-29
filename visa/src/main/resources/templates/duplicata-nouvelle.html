@@ -143,6 +143,7 @@
         </div>
 
         <form method="post" action="/duplicata/nouvelle-save">
+            <input type="hidden" name="isDuplicata" id="isDuplicata" value="false">
             <div class="form-group">
                 <label for="typeVisaId">Type de Visa <span style="color: #e74c3c;">*</span></label>
                 <select name="typeVisaId" id="typeVisaId" required>
@@ -181,5 +182,21 @@
             </div>
         </form>
     </div>
+
+    <script>
+        (function () {
+            const select = document.getElementById('typeDemandeId');
+            const hidden = document.getElementById('isDuplicata');
+            if (!select || !hidden) return;
+
+            function sync() {
+                const text = (select.options[select.selectedIndex]?.textContent || '').trim().toLowerCase();
+                hidden.value = (text === 'duplicata') ? 'true' : 'false';
+            }
+
+            select.addEventListener('change', sync);
+            sync();
+        })();
+    </script>
 </body>
 </html>

@@ -22,6 +22,12 @@ public class Demande {
     @JoinColumn(name = "id_statut_demande", nullable = false)
     private StatutDemande statutDemande;
 
+    @Column(name = "is_duplicata")
+    private Boolean isDuplicata;
+
+    @Column(name = "date_duplicata")
+    private LocalDate dateDuplicata;
+
     public Demande() {
     }
 
@@ -30,6 +36,22 @@ public class Demande {
         this.dateDemande = dateDemande;
         this.demandeur = demandeur;
         this.statutDemande = statutDemande;
+    }
+
+    public Boolean getIsDuplicata() {
+        return isDuplicata;
+    }
+
+    public void setIsDuplicata(Boolean isDuplicata) {
+        this.isDuplicata = isDuplicata;
+    }
+
+    public LocalDate getDateDuplicata() {
+        return dateDuplicata;
+    }
+
+    public void setDateDuplicata(LocalDate dateDuplicata) {
+        this.dateDuplicata = dateDuplicata;
     }
 
     public Long getIdDemande() {
@@ -69,5 +91,10 @@ public class Demande {
     public String getDateDemandeFormatee() {
         if (dateDemande == null) return "";
         return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dateDemande);
+    }
+
+    public String getDateDuplicataFormatee() {
+        if (dateDuplicata == null) return "";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dateDuplicata);
     }
 }

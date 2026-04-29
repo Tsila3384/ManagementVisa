@@ -32,6 +32,9 @@ public class DemandeVisaDTO {
     // Étape 4 : Type de visa
     private Long idTypeVisa;
 
+    // Flag explicite: duplicata sélectionné (ne dépend pas de TypeDemandeVisa)
+    private Boolean isDuplicata;
+
     // Étape 5 : Documents
     private List<String> docCommun;
     private List<String> docType;
@@ -66,6 +69,14 @@ public class DemandeVisaDTO {
         this.idTypeVisa = idTypeVisa;
         this.docCommun = docCommun;
         this.docType = docType;
+    }
+
+    public Boolean getIsDuplicata() {
+        return isDuplicata;
+    }
+
+    public void setIsDuplicata(Boolean isDuplicata) {
+        this.isDuplicata = isDuplicata;
     }
 
     public String getNom() {

@@ -67,6 +67,19 @@ public class DuplicataController {
     }
 
     /**
+     * Marque directement une demande comme duplicata
+     */
+    @GetMapping("/marquer/{id}")
+    public String marquerDuplicata(@PathVariable("id") Long demandeId) {
+        try {
+            Demande demande = duplicataService.duplicatedemande(demandeId, null);
+            return "redirect:/demandes/" + demande.getIdDemande();
+        } catch (Exception e) {
+            return "redirect:/demandes?error=Erreur lors du marquage duplicata";
+        }
+    }
+
+    /**
      * Traite la duplication d'une demande existante
      */
     @PostMapping("/duplicate")
@@ -75,8 +88,8 @@ public class DuplicataController {
             @RequestParam(value = "remarques", required = false) String remarques
     ) {
         try {
-            Demande nouvelleDemande = duplicataService.duplicatedemande(demandeId, remarques);
-            return "redirect:/demandes/" + nouvelleDemande.getIdDemande();
+            Demande demande = duplicataService.duplicatedemande(demandeId, remarques);
+            return "redirect:/demandes/" + demande.getIdDemande();
         } catch (Exception e) {
             return "redirect:/duplicata/formulaire-duplicate?error=Erreur lors de la duplication";
         }
@@ -90,7 +103,8 @@ public class DuplicataController {
             @RequestParam(value = "typeVisaId") Long typeVisaId,
             @RequestParam(value = "typeDemandeId") Long typeDemandeId,
             @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "remarques", required = false) String remarques
+            @RequestParam(value = "remarques", required = false) String remarques,
+            @RequestParam(value = "isDuplicata", required = false) Boolean isDuplicata
     ) {
         try {
             // Créer un nouveau demandeur
@@ -111,8 +125,9 @@ public class DuplicataController {
                     .findFirst()
                     .orElse(statutDemandeRepository.findAll().get(0));
 
-            // Créer la nouvelle demande
-            Demande nouvelleDemande = duplicataService.creerNouvelledemande(demandeur, remarques);
+                // Créer la nouvelle demande
+                boolean duplicataFlag = Boolean.TRUE.equals(isDuplicata);
+                Demande nouvelleDemande = duplicataService.creerNouvelledemande(demandeur, remarques, duplicataFlag);
             nouvelleDemande.setStatutDemande(statut);
             nouvelleDemande = demandeRepository.save(nouvelleDemande);
 

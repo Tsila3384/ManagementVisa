@@ -78,6 +78,8 @@ CREATE TABLE demande
 (
     Id_demande SERIAL,
     date_demande DATE,
+    is_duplicata BOOLEAN DEFAULT FALSE,
+    date_duplicata DATE,
     Id_demandeur INTEGER NOT NULL,
     Id_statut_demande INTEGER NOT NULL,
     PRIMARY KEY(Id_demande),

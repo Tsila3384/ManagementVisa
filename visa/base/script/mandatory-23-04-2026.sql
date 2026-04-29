@@ -1,0 +1,7 @@
+
+ALTER TABLE demande
+	ADD COLUMN IF NOT EXISTS is_duplicata BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE demande
+	ADD COLUMN IF NOT EXISTS date_duplicata DATE;
+
