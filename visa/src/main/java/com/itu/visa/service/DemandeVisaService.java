@@ -27,6 +27,7 @@ public class DemandeVisaService {
     private final DemandeDocumentsTypeRepository demandeDocumentsTypeRepository;
     private final DocumentsCommunRepository documentsCommunRepository;
     private final DocumentsTypeRepository documentsTypeRepository;
+    private final DuplicataRepository duplicataRepository;
 
     public DemandeVisaService(EtatCivilRepository etatCivilRepository, PasseportRepository passeportRepository,
             VisaTransformableRepository visaTransformableRepository, DemandeurRepository demandeurRepository,
@@ -37,7 +38,8 @@ public class DemandeVisaService {
             DemandeDocumentsCommunRepository demandeDocumentsCommunRepository,
             DemandeDocumentsTypeRepository demandeDocumentsTypeRepository,
             DocumentsCommunRepository documentsCommunRepository,
-            DocumentsTypeRepository documentsTypeRepository) {
+            DocumentsTypeRepository documentsTypeRepository,
+            DuplicataRepository duplicataRepository) {
         this.etatCivilRepository = etatCivilRepository;
         this.passeportRepository = passeportRepository;
         this.visaTransformableRepository = visaTransformableRepository;
@@ -54,6 +56,8 @@ public class DemandeVisaService {
         this.demandeDocumentsTypeRepository = demandeDocumentsTypeRepository;
         this.documentsCommunRepository = documentsCommunRepository;
         this.documentsTypeRepository = documentsTypeRepository;
+        this.duplicataRepository = duplicataRepository;
+    
     }
 
     /**
@@ -88,7 +92,13 @@ public class DemandeVisaService {
         demande.setDateDemande(LocalDate.now());
         demande.setDemandeur(demandeurSave);
         demande.setStatutDemande(statutInitial);
-        demandeRepository.save(demande);
+
+        boolean isDuplicata = Boolean.TRUE.equals(demandeVisa.getIsDuplicata());
+        demande.setIsDuplicata(isDuplicata);
+        demande.setDateDuplicata(isDuplicata ? LocalDate.now() : null);
+        demande = demandeRepository.save(demande);
+
+        // Duplicata: on utilise uniquement demande.is_duplicata/date_duplicata
 
         // 3. Créer/récupérer les références
         Sexe sexe = demandeVisa.getIdSexe() != null ? sexeRepository.findById(demandeVisa.getIdSexe()).orElse(null)

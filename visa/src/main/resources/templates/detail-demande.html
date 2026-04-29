@@ -206,7 +206,7 @@
       <div class="header">
         <h1>Détails de la Demande</h1>
         <div style="display: flex; gap: 10px;">
-          <a href="/duplicata/choix" style="padding: 10px 20px; background: var(--clr-warning); color: white; text-decoration: none; border-radius: var(--radius-md); cursor: pointer; transition: opacity 0.15s;">
+          <a th:href="@{/duplicata/marquer/{id}(id=${demande.idDemande})}" style="padding: 10px 20px; background: var(--clr-warning); color: white; text-decoration: none; border-radius: var(--radius-md); cursor: pointer; transition: opacity 0.15s;">
             📋 Dupliquer
           </a>
           <a href="/demandes" style="padding: 10px 20px; background: var(--clr-accent); color: white; text-decoration: none; border-radius: var(--radius-md); transition: opacity 0.15s;">← Retour à la liste</a>
@@ -245,6 +245,14 @@
             <span class="info-value" th:text="${demande.dateDemandeFormatee}"
               >23/04/2026</span
             >
+          </div>
+          <div class="info-item">
+            <span class="info-label">Duplicata</span>
+            <span class="info-value" th:text="${demande.isDuplicata} ? 'Oui' : 'Non'">Non</span>
+          </div>
+          <div class="info-item" th:if="${demande.isDuplicata}">
+            <span class="info-label">Date duplicata</span>
+            <span class="info-value" th:text="${demande.dateDuplicataFormatee}"></span>
           </div>
         </div>
       </div>
@@ -345,8 +353,8 @@
               transition: all 0.2s;
               box-shadow: 0 2px 8px rgba(58, 125, 68, 0.2);
             "
-            onmouseover="this.style.boxShadow='0 4px 12px rgba(58, 125, 68, 0.3); this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.boxShadow='0 2px 8px rgba(58, 125, 68, 0.2); this.style.transform='translateY(0)'"
+            onmouseover="this.style.boxShadow='0 4px 12px rgba(58, 125, 68, 0.3)'; this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.boxShadow='0 2px 8px rgba(58, 125, 68, 0.2)'; this.style.transform='translateY(0)'"
           >
             + Ajouter un document
           </a>

@@ -849,14 +849,16 @@
                         <label class="field-label">Type de demande</label>
                         <div class="radio-group">
                             <label class="radio-card">
-                                <input type="radio" name="type_demande_visa" value="1" checked>
+                                <input type="radio" name="type_demande_visa" value="1" checked
+                                    th:value="${#lists.isEmpty(typesDemandeVisa.?[libelle != null and libelle.equalsIgnoreCase('Nouvelle demande')]) ? 1 : typesDemandeVisa.?[libelle != null and libelle.equalsIgnoreCase('Nouvelle demande')][0].idTypeDemandeVisa}">
                                 <div>
                                     <div class="radio-card-label">Nouveau titre</div>
                                     <div class="radio-card-sub">Première demande de transformation de visa</div>
                                 </div>
                             </label>
                             <label class="radio-card">
-                                <input type="radio" name="type_demande_visa" value="2">
+                                <input type="radio" name="type_demande_visa" value="4"
+                                    th:value="${#lists.isEmpty(typesDemandeVisa.?[libelle != null and libelle.equalsIgnoreCase('Duplicata')]) ? 4 : typesDemandeVisa.?[libelle != null and libelle.equalsIgnoreCase('Duplicata')][0].idTypeDemandeVisa}">
                                 <div>
                                     <div class="radio-card-label">Duplicata</div>
                                     <div class="radio-card-sub">Remplacement d'un titre perdu ou détérioré</div>
@@ -1091,6 +1093,14 @@
 
         /* ── Soumission ───────────────────────────────────────────── */
         function submitForm() {
+            const selectedTypeDemandeLabel = document
+                .querySelector('input[name="type_demande_visa"]:checked')
+                ?.closest('label')
+                ?.querySelector('.radio-card-label')
+                ?.textContent
+                ?.trim();
+            const isDuplicataSelected = (selectedTypeDemandeLabel || '').toLowerCase() === 'duplicata';
+
             // Collecter toutes les données du formulaire
             const formData = {
                 // Étape 1 : État civil
@@ -1117,6 +1127,7 @@
                 lieu: document.getElementById('lieu_entree')?.value || '',
                 dateExpirationVisa: document.getElementById('date_expir_visa')?.value || null,
                 idTypeDemandeVisa: document.querySelector('input[name="type_demande_visa"]:checked')?.value || null,
+                isDuplicata: isDuplicataSelected,
 
                 // Étape 4 : Type de visa
                 idTypeVisa: document.querySelector('input[name="visa_type"]:checked')?.value || null,

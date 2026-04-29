@@ -197,9 +197,7 @@
         <div class="header">
             <h1>Demandes de Visa</h1>
             <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/duplicata/choix" style="padding: 10px 20px; background: var(--clr-success); color: white; text-decoration: none; border-radius: var(--radius-md); transition: opacity 0.15s;">
-                    ➕ Nouvelle Demande
-                </a>
+            
                 <a href="/" style="padding: 10px 20px; background: var(--clr-accent); color: white; text-decoration: none; border-radius: var(--radius-md); transition: opacity 0.15s;">
                     ← Retour au formulaire
                 </a>
@@ -210,16 +208,19 @@
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Référence</th>
                         <th>Demandeur</th>
                         <th>Type de Visa</th>
                         <th>Date de Demande</th>
                         <th>Statut</th>
+                        <th>Duplicata</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="item : ${demandesWithDetails}">
+                        <td th:text="${item['demande'].idDemande}">1</td>
                         <td th:text="${item['demande'].demandeur.code}">VLS-2026-000001</td>
                         <td>
                             <span th:text="${item['etatCivil'] != null ? item['etatCivil'].prenom + ' ' + item['etatCivil'].nom : 'N/A'}">Nom Prenom</span>
@@ -228,6 +229,10 @@
                         <td th:text="${item['demande'].dateDemandeFormatee}">23/04/2026</td>
                         <td>
                             <span th:classappend="${'badge-' + (item['demande'].statutDemande.libelle == 'Approuvée' ? 'success' : item['demande'].statutDemande.libelle == 'Rejetée' ? 'danger' : item['demande'].statutDemande.libelle == 'En attente' ? 'warning' : 'info')}" class="badge" th:text="${item['demande'].statutDemande.libelle}">Statut</span>
+                        </td>
+                        <td>
+                            <span th:if="${item['hasDuplicata']}" class="badge badge-info">✓ Oui</span>
+                            <span th:unless="${item['hasDuplicata']}" style="color: var(--clr-text-muted);">—</span>
                         </td>
                         <td>
                             <a th:href="@{/demandes/{id}(id=${item['demande'].idDemande})}" class="btn btn-primary">Détails</a>

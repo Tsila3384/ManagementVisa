@@ -30,6 +30,7 @@ public class HomeController {
     private final EtatCivilRepository etatCivilRepository;
     private final HistoriqueDocumentService historiqueDocumentService;
     private final HistoriqueDocumentRepository historiqueDocumentRepository;
+    private final DuplicataRepository duplicataRepository;
 
     public HomeController(SexeRepository sexeRepository,
                           SituationFamilialeRepository situationFamilialeRepository,
@@ -47,7 +48,8 @@ public class HomeController {
                           DemandeDocumentsTypeRepository demandeDocumentsTypeRepository,
                           EtatCivilRepository etatCivilRepository,
                           HistoriqueDocumentService historiqueDocumentService,
-                          HistoriqueDocumentRepository historiqueDocumentRepository) {
+                          HistoriqueDocumentRepository historiqueDocumentRepository,
+                          DuplicataRepository duplicataRepository) {
         this.sexeRepository = sexeRepository;
         this.situationFamilialeRepository = situationFamilialeRepository;
         this.nationaliteRepository = nationaliteRepository;
@@ -65,6 +67,7 @@ public class HomeController {
         this.etatCivilRepository = etatCivilRepository;
         this.historiqueDocumentService = historiqueDocumentService;
         this.historiqueDocumentRepository = historiqueDocumentRepository;
+        this.duplicataRepository = duplicataRepository;
     }
 
     /**
@@ -231,6 +234,7 @@ public class HomeController {
                 Map<String, Object> demandeMap = new HashMap<>();
                 demandeMap.put("demande", demande);
                 demandeMap.put("etatCivil", etatCivil);
+                demandeMap.put("hasDuplicata", Boolean.TRUE.equals(demande.getIsDuplicata()));
                 return demandeMap;
             })
             .toList();
