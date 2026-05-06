@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Importer / Uploader les dossiers</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --clr-bg: #f5f3ef;
+        --clr-surface: #ffffff;
+        --clr-border: #d8d4cc;
+        --clr-text: #1a1916;
+        --clr-text-muted: #6b6760;
+        --clr-accent: #1a1916;
+        --clr-accent-bg: #f0ede8;
+        --clr-success: #3a7d44;
+        --clr-warning: #f39c12;
+        --clr-danger: #e74c3c;
+
+        --radius-md: 8px;
+        --radius-lg: 12px;
+      }
+
+      body {
+        font-family: "DM Sans", system-ui, sans-serif;
+        background-color: var(--clr-bg);
+        color: var(--clr-text);
+        padding: 2rem 1rem;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        gap: 10px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 400;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border-radius: var(--radius-md);
+        border: 0;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: opacity 0.15s;
+        color: white;
+        background: var(--clr-accent);
+        font-size: 14px;
+      }
+
+      .btn:hover {
+        opacity: 0.85;
+      }
+
+      .btn-warning {
+        background: var(--clr-warning);
+      }
+
+      .btn-success {
+        background: var(--clr-success);
+      }
+
+      .card {
+        background: var(--clr-surface);
+        border-radius: var(--radius-lg);
+        border: 0.5px solid var(--clr-border);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .msg {
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+        border: 0.5px solid var(--clr-border);
+        background: var(--clr-accent-bg);
+        color: var(--clr-text);
+        font-size: 14px;
+      }
+
+      .msg.error {
+        background: #fadbd8;
+        border-color: #f1c2bd;
+      }
+
+      .msg.success {
+        background: #d5f4e6;
+        border-color: #b9e6cf;
+      }
+
+      .list {
+        list-style: none;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 120px 1fr 260px 120px;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border: 0.5px solid var(--clr-border);
+        border-radius: var(--radius-md);
+        margin-bottom: 10px;
+        background: var(--clr-accent-bg);
+      }
+
+      .pill {
+        font-size: 12px;
+        font-weight: 700;
+        width: fit-content;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--clr-surface);
+        border: 0.5px solid var(--clr-border);
+        color: var(--clr-text-muted);
+        text-transform: uppercase;
+      }
+
+      .status {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .status.ok {
+        color: var(--clr-success);
+      }
+
+      .status.ko {
+        color: var(--clr-danger);
+      }
+
+      input[type="file"] {
+        width: 100%;
+      }
+
+      @media (max-width: 850px) {
+        .row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .actions {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Importer / Uploader les dossiers</h1>
+        <div class="actions">
+          <form th:action="@{/demandes/{id}/scan/import(id=${demande.idDemande})}" method="post">
+            <button class="btn btn-warning" type="submit">Importer les dossiers</button>
+          </form>
+          <a class="btn" th:href="@{/demandes/{id}(id=${demande.idDemande})}">← Retour</a>
+        </div>
+      </div>
+
+      <div th:if="${error != null}" class="msg error" th:text="${error}">Erreur</div>
+      <div th:if="${success != null}" class="msg success" th:text="${success}">Succès</div>
+
+      <div class="card">
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Liste des dossiers</h2>
+
+        <div th:if="${documents == null || documents.isEmpty()}" class="msg">
+          Aucun document à uploader pour cette demande.
+        </div>
+
+        <ul class="list" th:if="${documents != null && !documents.isEmpty()}">
+          <li class="row" th:each="doc : ${documents}">
+            <span class="pill" th:text="${doc.kind}">TYPE</span>
+            <div>
+              <div style="font-size: 14px; font-weight: 600;" th:text="${doc.libelle}">Document</div>
+              <div style="font-size: 12px; color: var(--clr-text-muted);">PDF renommé comme le document</div>
+            </div>
+
+            <form th:action="@{/demandes/{id}/scan/upload(id=${demande.idDemande})}" method="post" enctype="multipart/form-data" style="display: flex; gap: 8px; align-items: center;">
+              <input type="hidden" name="kind" th:value="${doc.kind}" />
+              <input type="hidden" name="joinId" th:value="${doc.joinId}" />
+              <input type="file" name="file" accept="application/pdf" required />
+              <button class="btn" type="submit">Uploader</button>
+            </form>
+
+            <span class="status" th:classappend="${doc.uploaded} ? ' ok' : ' ko'" th:text="${doc.uploaded} ? 'OK' : 'NON'">OK</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card" th:if="${allUploaded}">
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Scan terminé</h2>
+        <div class="msg" style="margin-bottom: 12px;">
+          Tous les dossiers sont uploadés. Vous pouvez terminer le scan.
+        </div>
+        <form th:action="@{/demandes/{id}/scan/terminer(id=${demande.idDemande})}" method="post">
+          <button class="btn btn-success" type="submit">Scan terminée</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-bottom: 0;">
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Historique des documents remis</h2>
+
+        <div th:if="${(historiqueDocuments == null || historiqueDocuments.isEmpty()) and (historiqueDocumentsCommuns == null || historiqueDocumentsCommuns.isEmpty())}" class="msg">
+          Aucun document remis pour le moment.
+        </div>
+
+        <ul class="list" th:if="${historiqueDocuments != null && !historiqueDocuments.isEmpty()}">
+          <li class="row" th:each="hist : ${historiqueDocuments}" style="grid-template-columns: 1fr 220px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 600;" th:text="${hist.document.libelle}">Document</div>
+              <div style="font-size: 12px; color: var(--clr-text-muted);">
+                📅 <span th:text="${#temporals.format(hist.dateRemise, 'dd/MM/yyyy')}"></span>
+              </div>
+            </div>
+            <span class="status ok">REMIS</span>
+          </li>
+        </ul>
+
+        <div th:if="${historiqueDocumentsCommuns != null && !historiqueDocumentsCommuns.isEmpty()}" style="margin-top: 1rem;">
+          <div style="font-size: 12px; color: var(--clr-text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Documents communs</div>
+          <ul class="list">
+            <li class="row" th:each="hist : ${historiqueDocumentsCommuns}" style="grid-template-columns: 1fr 220px;">
+              <div>
+                <div style="font-size: 14px; font-weight: 600;" th:text="${hist.document.libelle}">Document</div>
+                <div style="font-size: 12px; color: var(--clr-text-muted);">
+                  📅 <span th:text="${#temporals.format(hist.dateRemise, 'dd/MM/yyyy')}"></span>
+                </div>
+              </div>
+              <span class="status ok">REMIS</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un document commun</title>
+    <style>
+        body { font-family: 'DM Sans', system-ui, sans-serif; background: #f5f3ef; color: #1a1916; padding: 2rem; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 2rem; }
+        h2 { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        select { width: 100%; padding: 8px; margin-bottom: 1rem; border-radius: 6px; border: 1px solid #d8d4cc; }
+        button { padding: 10px 20px; background: #3a7d44; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .error { color: #e74c3c; margin-bottom: 1rem; }
+        .no-documents { text-align: center; padding: 2rem; color: #666; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Ajouter un document commun remis</h2>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <div th:if="${documents == null || documents.isEmpty()}" class="no-documents">
+        <p>✓ Tous les documents communs sont déjà ajoutés !</p>
+    </div>
+
+    <form th:unless="${documents == null || documents.isEmpty()}" method="post" action="/api/historique-documents-communs/add">
+        <input type="hidden" name="demandeurId" th:value="${demandeur.idDemandeur}" />
+        <label for="documentId">Document commun</label>
+        <select name="documentId" id="documentId" required>
+            <option value="">-- Sélectionner un document --</option>
+            <option th:each="doc : ${documents}" th:value="${doc.idDocumentsCommune}" th:text="${doc.libelle}"></option>
+        </select>
+        <p style="font-size: 12px; color: #666; margin-top: -0.5rem; margin-bottom: 1rem;">
+            La date de remise sera la date de la demande.
+        </p>
+        <button type="submit">Ajouter</button>
+    </form>
+
+    <div style="margin-top:1rem;">
+        <a th:href="@{/demandes}" style="display: inline-block; padding: 8px 16px; background: #666; color: white; text-decoration: none; border-radius: 6px;">← Retour à la liste</a>
+    </div>
+</div>
+</body>
+</html>

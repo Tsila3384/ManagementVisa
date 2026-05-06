@@ -206,6 +206,11 @@
       <div class="header">
         <h1>Détails de la Demande</h1>
         <div style="display: flex; gap: 10px;">
+          <form th:action="@{/demandes/{id}/scan/import(id=${demande.idDemande})}" method="post" style="margin: 0;">
+            <button type="submit" style="padding: 10px 20px; background: var(--clr-success); color: white; border: 0; text-decoration: none; border-radius: var(--radius-md); cursor: pointer; transition: opacity 0.15s;">
+              📁 Importer les dossiers
+            </button>
+          </form>
           <a th:href="@{/duplicata/marquer/{id}(id=${demande.idDemande})}" style="padding: 10px 20px; background: var(--clr-warning); color: white; text-decoration: none; border-radius: var(--radius-md); cursor: pointer; transition: opacity 0.15s;">
             📋 Dupliquer
           </a>
@@ -302,7 +307,33 @@
 
       <!-- ═══ Documents Communs ════════════════════════════════════ -->
       <div class="card">
-        <h2>Documents Communs</h2>
+        <h2
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span>Documents Communs</span>
+          <a
+            th:href="@{'/ajouter-document-commun'(demandeurId=${demandeur.getIdDemandeur() })}"
+            style="
+              padding: 10px 20px;
+              background: var(--clr-success);
+              color: white;
+              border-radius: 6px;
+              font-size: 14px;
+              text-decoration: none;
+              font-weight: 600;
+              transition: all 0.2s;
+              box-shadow: 0 2px 8px rgba(58, 125, 68, 0.2);
+            "
+            onmouseover="this.style.boxShadow='0 4px 12px rgba(58, 125, 68, 0.3)'; this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.boxShadow='0 2px 8px rgba(58, 125, 68, 0.2)'; this.style.transform='translateY(0)'"
+          >
+            + Ajouter un document commun
+          </a>
+        </h2>
         <div th:if="${!docsCommuns.isEmpty()}">
           <ul class="document-list">
             <li th:each="doc : ${docsCommuns}" class="document-item">
@@ -408,7 +439,21 @@
               </li>
             </ul>
           </div>
-          <div th:if="${historiqueDocuments == null or historiqueDocuments.isEmpty()}" class="no-data">
+          <div th:if="${historiqueDocumentsCommuns != null and !historiqueDocumentsCommuns.isEmpty()}" style="margin-top: 1rem;">
+            <div style="font-size: 12px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 10px;">Documents communs</div>
+            <ul class="document-list">
+              <li th:each="hist : ${historiqueDocumentsCommuns}" class="document-item" style="background: linear-gradient(135deg, #fdf2e9 0%, #fff7ef 100%); border-left: 4px solid var(--clr-warning);">
+                <span class="document-icon ok" style="background: var(--clr-warning); color: white; font-weight: bold;">✓</span>
+                <div style="flex: 1;">
+                  <span class="document-label" th:text="${hist.document.libelle}" style="display: block; margin-bottom: 6px; font-weight: 500;"></span>
+                  <span style="font-size: 12px; color: #666;">
+                    📅 <span th:text="${#temporals.format(hist.dateRemise, 'dd/MM/yyyy')}"></span>
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div th:if="${(historiqueDocuments == null or historiqueDocuments.isEmpty()) and (historiqueDocumentsCommuns == null or historiqueDocumentsCommuns.isEmpty())}" class="no-data">
             <span style="color: #999;">Aucun document remis pour le moment</span>
           </div>
         </div>
