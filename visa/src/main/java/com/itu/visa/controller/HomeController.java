@@ -30,6 +30,7 @@ public class HomeController {
     private final EtatCivilRepository etatCivilRepository;
     private final HistoriqueDocumentService historiqueDocumentService;
     private final HistoriqueDocumentRepository historiqueDocumentRepository;
+    private final HistoriqueDocumentCommunRepository historiqueDocumentCommunRepository;
     private final DuplicataRepository duplicataRepository;
 
     public HomeController(SexeRepository sexeRepository,
@@ -49,6 +50,7 @@ public class HomeController {
                           EtatCivilRepository etatCivilRepository,
                           HistoriqueDocumentService historiqueDocumentService,
                           HistoriqueDocumentRepository historiqueDocumentRepository,
+                          HistoriqueDocumentCommunRepository historiqueDocumentCommunRepository,
                           DuplicataRepository duplicataRepository) {
         this.sexeRepository = sexeRepository;
         this.situationFamilialeRepository = situationFamilialeRepository;
@@ -67,6 +69,7 @@ public class HomeController {
         this.etatCivilRepository = etatCivilRepository;
         this.historiqueDocumentService = historiqueDocumentService;
         this.historiqueDocumentRepository = historiqueDocumentRepository;
+        this.historiqueDocumentCommunRepository = historiqueDocumentCommunRepository;
         this.duplicataRepository = duplicataRepository;
     }
 
@@ -264,6 +267,7 @@ public class HomeController {
         
         // Charger l'historique des documents remis
         var historiqueDocuments = historiqueDocumentRepository.findByDemandeurIdOrderByDateRemiseDesc(demandeur.getIdDemandeur());
+        var historiqueDocumentsCommuns = historiqueDocumentCommunRepository.findByDemandeurIdOrderByDateRemiseDesc(demandeur.getIdDemandeur());
 
         model.addAttribute("demande", demande);
         model.addAttribute("demandeur", demandeur);
@@ -271,6 +275,7 @@ public class HomeController {
         model.addAttribute("docsCommuns", docsCommuns);
         model.addAttribute("docsTypes", docsTypes);
         model.addAttribute("historiqueDocuments", historiqueDocuments);
+        model.addAttribute("historiqueDocumentsCommuns", historiqueDocumentsCommuns);
         
         return "detail-demande";
     }

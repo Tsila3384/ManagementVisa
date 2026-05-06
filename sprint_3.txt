@@ -1,0 +1,5 @@
+Dans la page detail_demande, crée un bouton Importer les dossiers qui va crée un dossier physique 
+avec l'id et le nom du demandeur qui va ramener à une 
+liste de dossier et un upload à coté pour uploader le fichier correspondant prenant un fichier pdf. que l'on va renommer exactement comme 
+exactement le nom du document communs ou typés.lorsque tous les dossiers sont uploader on ajoute un bouton scan terminéé tout en bas et lorsqu'on clique 
+sur ce bouton le statut_demande passe à id 2 
